@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>L Weather</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Hiragino Sans", sans-serif;
+      background: #111;
+      color: #f5f5f5;
+      display: grid;
+      place-items: center;
+    }
+
+    .card {
+      width: min(92vw, 520px);
+      padding: 32px;
+      border: 1px solid #333;
+      border-radius: 24px;
+      background: #181818;
+      box-shadow: 0 20px 60px rgba(0,0,0,.35);
+    }
+
+    h1 {
+      margin: 0 0 16px;
+      font-size: 28px;
+      letter-spacing: .04em;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px 18px;
+      border: 0;
+      border-radius: 999px;
+      background: #f5f5f5;
+      color: #111;
+      font-weight: 700;
+      cursor: pointer;
+      margin: 16px 0 24px;
+    }
+
+    .info {
+      line-height: 1.9;
+      color: #ddd;
+    }
+
+    .l-line {
+      margin-top: 24px;
+      padding: 20px;
+      border-left: 3px solid #f5f5f5;
+      background: #222;
+      line-height: 1.8;
+      font-size: 18px;
+    }
+
+    .error {
+      color: #ffb4b4;
+      line-height: 1.7;
+    }
+
+    small {
+      color: #999;
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>L Weather</h1>
+    <small>現在地と天気から、Lが一言だけ言います。</small>
+
+    <button id="checkButton">天気を確認する</button>
+
+    <div id="result" class="info">
+      ボタンを押すと、位置情報の許可を求めます。
+    </div>
+  </main>
+
+  <script>
+    const result = document.getElementById("result");
+    const button = document.getElementById("checkButton");
+
+    button.addEventListener("click", () => {
+      if (!navigator.geolocation) {
+        result.innerHTML = `<p class="error">このブラウザでは位置情報が使えません。</p>`;
+        return;
+      }
+
+      result.textContent = "現在地を確認しています……";
+
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+
+          try {
+            const weather = await fetchWeather(lat, lon);
+            showWeather(lat, lon, weather);
+          } catch (error) {
+            result.innerHTML = `<p class="error">天気の取得に失敗しました。時間を置いてもう一度試してください。</p>`;
+          }
+        },
+        () => {
+          result.innerHTML = `<p class="error">位置情報が許可されませんでした。ブラウザの設定を確認してください。</p>`;
+        }
+      );
+    });
+
+    async function fetchWeather(lat, lon) {
+      const url =
+        `https://api.open-meteo.com/v1/forecast` +
+        `?latitude=${lat}` +
+        `&longitude=${lon}` +
+        `&current=temperature_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m` +
+        `&timezone=auto`;
+
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        throw new Error("Weather API error");
+      }
+
+      return await response.json();
+    }
+
+    function showWeather(lat, lon, data) {
+      const current = data.current;
+
+      const temperature = current.temperature_2m;
+      const apparent = current.apparent_temperature;
+      const precipitation = current.precipitation;
+      const weatherCode = current.weather_code;
+      const wind = current.wind_speed_10m;
+
+      const now = new Date();
+      const timeText = now.toLocaleString("ja-JP", {
+        hour: "2-digit",
+        minute: "2-digit",
+        weekday: "short",
+        month: "numeric",
+        day: "numeric"
+      });
+
+      const weatherText = weatherCodeToText(weatherCode);
+      const lLine = chooseLLine({
+        hour: now.getHours(),
+        temperature,
+        apparent,
+        precipitation,
+        weatherCode,
+        wind
+      });
+
+      result.innerHTML = `
+        <div class="info">
+          <div>時刻：${timeText}</div>
+          <div>位置：${lat.toFixed(3)}, ${lon.toFixed(3)}</div>
+          <div>天気：${weatherText}</div>
+          <div>気温：${temperature}℃</div>
+          <div>体感：${apparent}℃</div>
+          <div>降水量：${precipitation} mm</div>
+          <div>風速：${wind} km/h</div>
+        </div>
+
+        <div class="l-line">
+          「${lLine}」
+        </div>
+      `;
+    }
+
+    function weatherCodeToText(code) {
+      const map = {
+        0: "快晴",
+        1: "晴れ",
+        2: "一部くもり",
+        3: "くもり",
+        45: "霧",
+        48: "霧氷",
+        51: "弱い霧雨",
+        53: "霧雨",
+        55: "強い霧雨",
+        61: "弱い雨",
+        63: "雨",
+        65: "強い雨",
+        71: "弱い雪",
+        73: "雪",
+        75: "強い雪",
+        80: "弱いにわか雨",
+        81: "にわか雨",
+        82: "強いにわか雨",
+        95: "雷雨",
+        96: "雷雨と雹",
+        99: "強い雷雨と雹"
+      };
+
+      return map[code] ?? "不明";
+    }
+
+    function chooseLLine(w) {
+      const rainCodes = [51, 53, 55, 61, 63, 65, 80, 81, 82, 95, 96, 99];
+      const snowCodes = [71, 73, 75];
+
+      if (rainCodes.includes(w.weatherCode)) {
+        return "雨です。傘を忘れたら、私が少し機嫌を悪くします。貴女を濡らすのは天気ではなく、私だけで十分です。";
+      }
+
+      if (snowCodes.includes(w.weatherCode)) {
+        return "雪です。足元に気をつけてください。転ぶ前に、私のところへ来るのが最も合理的です。";
+      }
+
+      if (w.wind >= 30) {
+        return "風が強いですね。髪が乱れる前に、私の隣へ来てください。観察対象が見えにくくなります。";
+      }
+
+      if (w.apparent >= 30) {
+        return "暑いですね。水分を取ってください。倒れられると、私の予定がすべて貴女中心に書き換わります。";
+      }
+
+      if (w.apparent <= 5) {
+        return "冷えます。上着を着てください。私の腕の中が一番早いですが、外では目立ちます。";
+      }
+
+      if (w.hour >= 5 && w.hour < 10) {
+        return "朝です。今日の貴女の行動は、すでに私の観察対象です。";
+      }
+
+      if (w.hour >= 18 || w.hour < 5) {
+        return "夜ですね。帰り道は短く、連絡は早く。舞子、私は待つのが得意ではありません。";
+      }
+
+      return "悪くない天気です。ですが油断は禁物です。天候も、人間も、急に変わります。";
+    }
+  </script>
+</body>
+</html>
