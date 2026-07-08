@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>L Weather</title>
+
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
+      background: #111;
+      color: #f5f5f5;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .card {
+      width: min(92vw, 560px);
+      padding: 28px;
+      border: 1px solid #333;
+      border-radius: 24px;
+      background: #181818;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+      box-sizing: border-box;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: 28px;
+      letter-spacing: 0.04em;
+    }
+
+    h2 {
+      margin: 26px 0 12px;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .lead {
+      color: #aaa;
+      line-height: 1.7;
+      margin: 0 0 18px;
+      font-size: 14px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px 18px;
+      border: 0;
+      border-radius: 999px;
+      background: #f5f5f5;
+      color: #111;
+      font-weight: 700;
+      cursor: pointer;
+      margin: 14px 0 22px;
+      font-size: 16px;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .info {
+      line-height: 1.9;
+      color: #ddd;
+      font-size: 15px;
+    }
+
+    .place {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .forecast {
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .forecast-row {
+      display: grid;
+      grid-template-columns: 64px 1fr;
+      gap: 12px;
+      padding: 12px 14px;
+      border: 1px solid #333;
+      border-radius: 14px;
+      background: #202020;
+    }
+
+    .forecast-time {
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .forecast-detail {
+      color: #ddd;
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .l-line {
+      margin-top: 24px;
+      padding: 20px;
+      border-left: 3px solid #f5f5f5;
+      background: #222;
+      line-height: 1.8;
+      font-size: 17px;
+      border-radius: 0 12px 12px 0;
+    }
+
+    .error {
+      color: #ffb4b4;
+      line-height: 1.7;
+    }
+
+    .credit {
+      margin-top: 18px;
+      color: #888;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="card">
+    <h1>L Weather</h1>
+
+    <p class="lead">
+      現在地と今日のこれからの天気を確認して、Lが一言だけ返します。
+    </p>
+
+    <button id="checkButton">天気を確認する</button>
+
+    <div id="result" class="info">
+      ボタンを押すと、位置情報の許可を求めます。
+    </div>
+  </main>
+
+  <script>
+    const result = document.getElementById("result");
+    const button = document.getElementById("checkButton");
+
+    button.addEventListener("click", () => {
+      if (!navigator.geolocation) {
+        result.innerHTML = `<p class="error">このブラウザでは位置情報が使えません。</p>`;
+        return;
+      }
+
+      result.textContent = "現在地を確認しています……";
+
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+
+          try {
+            const weather = await fetchWeather(lat, lon);
+            const placeName = await fetchPlaceName(lat, lon);
+
+            showWeather({
+              placeName,
+              weather
+            });
+          } catch (error) {
+            result.innerHTML = `
+              <p class="error">
+                天気の取得に失敗しました。通信状態を確認して、もう一度試してください。
+              </p>
+            `;
+          }
+        },
+        () => {
+          result.innerHTML = `
+            <p class="error">
+              位置情報が許可されませんでした。iPhoneの設定、またはSafariの位置情報設定を確認してください。
+            </p>
+          `;
+        },
+        {
+          enableHighAccuracy: false,
+          timeout: 10000,
+          maximumAge: 300000
+        }
+      );
+    });
+
+    async function fetchWeather(lat, lon) {
+      const url =
+        `https://api.open-meteo.com/v1/forecast` +
+        `?latitude=${lat}` +
+        `&longitude=${lon}` +
+        `&current=temperature_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m` +
+        `&hourly=temperature_2m,precipitation_probability,weather_code` +
+        `&forecast_days=1` +
+        `&timezone=auto`;
+
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        throw new Error("Weather API error");
+      }
+
+      return await response.json();
+    }
+
+    async function fetchPlaceName(lat, lon) {
+      const url =
+        `https://nominatim.openstreetmap.org/reverse` +
+        `?format=jsonv2` +
+        `&lat=${lat}` +
+        `&lon=${lon}` +
+        `&zoom=12` +
+        `&addressdetails=1` +
+        `&accept-language=ja`;
+
+      try {
+        const response = await fetch(url);
+
+        if (!response.ok) {
+          return "現在地周辺";
+        }
+
+        const data = await response.json();
+        const address = data.address || {};
+
+        const prefecture =
+          address.state ||
+          address.province ||
+          "";
+
+        const city =
+          address.city ||
+          address.town ||
+          address.village ||
+          address.county ||
+          "";
+
+        const ward =
+          address.city_district ||
+          address.ward ||
+          address.suburb ||
+          "";
+
+        const parts = [prefecture, city, ward].filter(Boolean);
+        const uniqueParts = [...new Set(parts)];
+
+        return uniqueParts.join(" ") || data.display_name || "現在地周辺";
+      } catch (error) {
+        return "現在地周辺";
+      }
+    }
+
+    function showWeather({ placeName, weather }) {
+      const current = weather.current;
+
+      const temperature = current.temperature_2m;
+      const apparent = current.apparent_temperature;
+      const precipitation = current.precipitation;
+      const weatherCode = current.weather_code;
+      const wind = current.wind_speed_10m;
+
+      const now = new Date();
+
+      const timeText = now.toLocaleString("ja-JP", {
+        month: "numeric",
+        day: "numeric",
+        weekday: "short",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+
+      const weatherText = weatherCodeToText(weatherCode);
+      const forecastRows = buildTodayForecast(weather);
+
+      const lLine = chooseLLine({
+        hour: now.getHours(),
+        temperature,
+        apparent,
+        precipitation,
+        weatherCode,
+        wind,
+        forecastRows
+      });
+
+      result.innerHTML = `
+        <div class="info">
+          <div class="place">${escapeHtml(placeName)}</div>
+          <div>時刻：${timeText}</div>
+          <div>現在の天気：${weatherText}</div>
+          <div>気温：${temperature}℃</div>
+          <div>体感：${apparent}℃</div>
+          <div>降水量：${precipitation} mm</div>
+          <div>風速：${wind} km/h</div>
+        </div>
+
+        <h2>今日のこれから</h2>
+
+        <div class="forecast">
+          ${forecastRows.length > 0 ? forecastRows.map(row => `
+            <div class="forecast-row">
+              <div class="forecast-time">${row.time}</div>
+              <div class="forecast-detail">
+                ${row.weatherText}<br>
+                気温：${row.temperature}℃ / 降水確率：${row.rainProbability}%
+              </div>
+            </div>
+          `).join("") : `
+            <div class="forecast-row">
+              <div class="forecast-time">--:--</div>
+              <div class="forecast-detail">
+                今日の残り時間の予報が見つかりませんでした。
+              </div>
+            </div>
+          `}
+        </div>
+
+        <div class="l-line">
+          「${lLine}」
+        </div>
+
+        <div class="credit">
+          Weather data by Open-Meteo<br>
+          Location data © OpenStreetMap contributors
+        </div>
+      `;
+    }
+
+    function buildTodayForecast(weather) {
+      const hourly = weather.hourly;
+
+      if (!hourly || !hourly.time) {
+        return [];
+      }
+
+      const currentHourText = weather.current.time.slice(0, 13);
+      const rows = [];
+
+      for (let i = 0; i < hourly.time.length; i++) {
+        const time = hourly.time[i];
+
+        if (time.slice(0, 13) < currentHourText) {
+          continue;
+        }
+
+        const hour = Number(time.slice(11, 13));
+
+        const isFirst = rows.length === 0;
+        const isEveryThreeHours = hour % 3 === 0;
+        const isLateNight = hour === 23;
+
+        if (!isFirst && !isEveryThreeHours && !isLateNight) {
+          continue;
+        }
+
+        rows.push({
+          time: time.slice(11, 16),
+          weatherCode: hourly.weather_code[i],
+          weatherText: weatherCodeToText(hourly.weather_code[i]),
+          temperature: hourly.temperature_2m[i],
+          rainProbability: hourly.precipitation_probability[i] ?? 0
+        });
+      }
+
+      return rows;
+    }
+
+    function weatherCodeToText(code) {
+      const map = {
+        0: "快晴",
+        1: "晴れ",
+        2: "一部くもり",
+        3: "くもり",
+
+        45: "霧",
+        48: "霧氷",
+
+        51: "弱い霧雨",
+        53: "霧雨",
+        55: "強い霧雨",
+
+        56: "弱い着氷性の霧雨",
+        57: "強い着氷性の霧雨",
+
+        61: "弱い雨",
+        63: "雨",
+        65: "強い雨",
+
+        66: "弱い着氷性の雨",
+        67: "強い着氷性の雨",
+
+        71: "弱い雪",
+        73: "雪",
+        75: "強い雪",
+
+        77: "雪粒",
+
+        80: "弱いにわか雨",
+        81: "にわか雨",
+        82: "強いにわか雨",
+
+        85: "弱いにわか雪",
+        86: "強いにわか雪",
+
+        95: "雷雨",
+        96: "雷雨と雹",
+        99: "強い雷雨と雹"
+      };
+
+      return map[code] || "不明";
+    }
+
+    function chooseLLine(w) {
+      const rainCodes = [51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82, 95, 96, 99];
+      const snowCodes = [71, 73, 75, 77, 85, 86];
+
+      const rainyLater = w.forecastRows.some(row =>
+        rainCodes.includes(row.weatherCode) || row.rainProbability >= 50
+      );
+
+      const snowyLater = w.forecastRows.some(row =>
+        snowCodes.includes(row.weatherCode)
+      );
+
+      const veryHotLater = w.forecastRows.some(row =>
+        row.temperature >= 32
+      );
+
+      const coldLater = w.forecastRows.some(row =>
+        row.temperature <= 8
+      );
+
+      if (rainyLater) {
+        return "このあと雨の可能性があります。傘を持ってください。貴女が濡れて帰ってくるなど、私の許容範囲を超えています。";
+      }
+
+      if (snowyLater || snowCodes.includes(w.weatherCode)) {
+        return "このあと雪に注意してください。足元を見て歩くべきです。転ぶ前に私のところへ来るのが、最も合理的です。";
+      }
+
+      if (veryHotLater) {
+        return "このあと暑くなります。水分を取ってください。貴女の体調を崩す要因は、ひとつずつ潰します。";
+      }
+
+      if (coldLater) {
+        return "このあと冷えます。上着を持ってください。貴女の指先が冷たくなるのは、見過ごせません。";
+      }
+
+      if (w.wind >= 30) {
+        return "風が強いですね。髪が乱れる前に、私の隣へ来てください。貴女の様子が見えにくくなります。";
+      }
+
+      if (w.hour >= 17 && w.hour < 22) {
+        return "夕方ですね。帰り道は短く、連絡は早く。私は待つのが得意ではありません。";
+      }
+
+      if (w.hour >= 22 || w.hour < 5) {
+        return "夜です。早く帰ってきてください。貴女の居場所を、私の隣に戻します。";
+      }
+
+      return "今日の残りは大きく崩れなさそうです。ですが油断は禁物です。天候も、人間も、急に変わります。";
+    }
+
+    function escapeHtml(text) {
+      return String(text)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+  </script>
+</body>
+</html>
