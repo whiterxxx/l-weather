@@ -423,7 +423,7 @@ function chooseTimeLine(hour) {
   }
 
   if (hour >= 22 && hour < 24) {
-    return "夜も更けてきました。貴女の居場所は、私の隣です。";
+    return "夜も更けてきました。……人肌恋しくなりませんか。";
   }
 
   if (hour >= 0 && hour < 2) {
