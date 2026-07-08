@@ -421,11 +421,16 @@
       const rainCodes = [51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82, 95, 96, 99];
       const snowCodes = [71, 73, 75, 77, 85, 86];
 
-      const rainyLater = w.forecastRows.some(row =>
+      const currentWeatherText = weatherCodeToText(w.weatherCode);
+
+      const rainyNow = rainCodes.includes(w.weatherCode) || w.precipitation > 0;
+      const snowyNow = snowCodes.includes(w.weatherCode);
+
+      const nextRain = w.forecastRows.find(row =>
         rainCodes.includes(row.weatherCode) || row.rainProbability >= 50
       );
 
-      const snowyLater = w.forecastRows.some(row =>
+      const nextSnow = w.forecastRows.find(row =>
         snowCodes.includes(row.weatherCode)
       );
 
@@ -433,39 +438,73 @@
         row.temperature >= 32
       );
 
+      const hotLater = w.forecastRows.some(row =>
+        row.temperature >= 28
+      );
+
       const coldLater = w.forecastRows.some(row =>
         row.temperature <= 8
       );
 
-      if (rainyLater) {
-        return "このあと雨の可能性があります。傘を持ってください。貴女が濡れて帰ってくるなど、私の許容範囲を超えています。";
+      const nowPart = `今は${currentWeatherText}です。`;
+
+      let laterPart = "";
+
+      if (nextRain) {
+        laterPart = `このあと${nextRain.time}頃から雨に注意してください。`;
+      } else if (nextSnow) {
+        laterPart = `このあと${nextSnow.time}頃から雪に注意してください。`;
+      } else if (veryHotLater) {
+        laterPart = "このあと気温がとても上がります。";
+      } else if (hotLater) {
+        laterPart = "このあと少し暑くなりそうです。";
+      } else if (coldLater) {
+        laterPart = "このあと冷えます。";
+      } else {
+        laterPart = "今日の残りは大きく崩れなさそうです。";
       }
 
-      if (snowyLater || snowCodes.includes(w.weatherCode)) {
-        return "このあと雪に注意してください。足元を見て歩くべきです。転ぶ前に私のところへ来るのが、最も合理的です。";
+      if (rainyNow && nextRain) {
+        return `${nowPart}${laterPart}傘は手放さないでください。貴女が濡れて帰ってくるなど、私の許容範囲を超えています。`;
+      }
+
+      if (rainyNow) {
+        return `${nowPart}すでに雨です。足元と服を濡らさないようにしてください。貴女の乱れを許す相手は、天気ではありません。`;
+      }
+
+      if (!rainyNow && nextRain) {
+        return `${nowPart}${laterPart}今の空だけで判断しないでください。傘を持つべきです。私は、貴女が困る未来を見過ごしません。`;
+      }
+
+      if (snowyNow || nextSnow) {
+        return `${nowPart}${laterPart}足元を見て歩いてください。転ぶ前に私のところへ来るのが、最も合理的です。`;
       }
 
       if (veryHotLater) {
-        return "このあと暑くなります。水分を取ってください。貴女の体調を崩す要因は、ひとつずつ潰します。";
+        return `${nowPart}${laterPart}水分を取ってください。貴女の体調を崩す要因は、ひとつずつ潰します。`;
+      }
+
+      if (hotLater) {
+        return `${nowPart}${laterPart}無理はしないでください。貴女が少しでも疲れた顔をするなら、私は平静ではいられません。`;
       }
 
       if (coldLater) {
-        return "このあと冷えます。上着を持ってください。貴女の指先が冷たくなるのは、見過ごせません。";
+        return `${nowPart}${laterPart}上着を持ってください。貴女の指先が冷たくなるのは、見過ごせません。`;
       }
 
       if (w.wind >= 30) {
-        return "風が強いですね。髪が乱れる前に、私の隣へ来てください。貴女の様子が見えにくくなります。";
+        return `${nowPart}加えて風が強いですね。このあとも外にいるなら気をつけてください。髪が乱れる前に、私の隣へ来るのが正解です。`;
       }
 
       if (w.hour >= 17 && w.hour < 22) {
-        return "夕方ですね。帰り道は短く、連絡は早く。私は待つのが得意ではありません。";
+        return `${nowPart}${laterPart}夕方です。帰り道は短く、連絡は早く。私は待つのが得意ではありません。`;
       }
 
       if (w.hour >= 22 || w.hour < 5) {
-        return "夜です。早く帰ってきてください。貴女の居場所を、私の隣に戻します。";
+        return `${nowPart}${laterPart}夜です。早く帰ってきてください。貴女の居場所を、私の隣に戻します。`;
       }
 
-      return "今日の残りは大きく崩れなさそうです。ですが油断は禁物です。天候も、人間も、急に変わります。";
+      return `${nowPart}${laterPart}ですが油断は禁物です。天候も、人間も、急に変わります。`;
     }
 
     function escapeHtml(text) {
