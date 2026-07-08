@@ -4,15 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>L Weather</title>
+  <title>L weather</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@400;500;700;900&display=swap" rel="stylesheet">
 
   <style>
     body {
       margin: 0;
       min-height: 100vh;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
-      background: #111;
-      color: #f5f5f5;
+      background:
+        radial-gradient(circle at top, rgba(0, 0, 0, 0.05), transparent 34%),
+        linear-gradient(180deg, #f8f7f3 0%, #e9e6dd 100%);
+      color: #111;
       display: grid;
       place-items: center;
       padding: 20px;
@@ -21,44 +25,67 @@
 
     .card {
       width: min(92vw, 560px);
-      padding: 28px;
-      border: 1px solid #333;
+      padding: 30px;
+      border: 1px solid rgba(0, 0, 0, 0.16);
       border-radius: 24px;
-      background: #181818;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+      background: rgba(255, 255, 255, 0.86);
+      box-shadow:
+        0 24px 70px rgba(0, 0, 0, 0.14),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
       box-sizing: border-box;
+      backdrop-filter: blur(8px);
     }
 
-    h1 {
-      margin: 0 0 12px;
-      font-size: 28px;
-      letter-spacing: 0.04em;
+    .logo {
+      margin: 0 0 18px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 7px;
+      line-height: 1;
     }
 
-    h2 {
-      margin: 26px 0 12px;
-      font-size: 18px;
+    .logo-image {
+      width: clamp(54px, 15vw, 78px);
+      height: auto;
+      display: block;
+      transform: translateY(3px);
+      opacity: 0.96;
+      object-fit: contain;
+    }
+
+    .logo-text {
+      font-family: "Grenze Gotisch", serif;
+      font-size: clamp(40px, 10vw, 58px);
       font-weight: 700;
+      letter-spacing: 0.04em;
+      color: #111;
+      text-shadow:
+        0 0 10px rgba(0, 0, 0, 0.08),
+        0 8px 22px rgba(0, 0, 0, 0.12);
+      transform: translateY(-1px);
     }
 
     .lead {
-      color: #aaa;
+      color: #555;
       line-height: 1.7;
-      margin: 0 0 18px;
+      margin: 0 0 20px;
       font-size: 14px;
+      text-align: center;
     }
 
     button {
       width: 100%;
       padding: 14px 18px;
-      border: 0;
+      border: 1px solid rgba(0, 0, 0, 0.72);
       border-radius: 999px;
-      background: #f5f5f5;
-      color: #111;
+      background: #111;
+      color: #fff;
       font-weight: 700;
       cursor: pointer;
-      margin: 14px 0 22px;
+      margin: 14px 0 24px;
       font-size: 16px;
+      letter-spacing: 0.04em;
     }
 
     button:active {
@@ -67,15 +94,23 @@
 
     .info {
       line-height: 1.9;
-      color: #ddd;
+      color: #222;
       font-size: 15px;
     }
 
     .place {
       font-size: 18px;
       font-weight: 700;
-      color: #fff;
+      color: #111;
       margin-bottom: 8px;
+    }
+
+    h2 {
+      margin: 28px 0 12px;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: #111;
     }
 
     .forecast {
@@ -89,18 +124,18 @@
       grid-template-columns: 64px 1fr;
       gap: 12px;
       padding: 12px 14px;
-      border: 1px solid #333;
+      border: 1px solid rgba(0, 0, 0, 0.16);
       border-radius: 14px;
-      background: #202020;
+      background: rgba(255, 255, 255, 0.72);
     }
 
     .forecast-time {
       font-weight: 700;
-      color: #fff;
+      color: #111;
     }
 
     .forecast-detail {
-      color: #ddd;
+      color: #333;
       line-height: 1.7;
       font-size: 14px;
     }
@@ -108,21 +143,22 @@
     .l-line {
       margin-top: 24px;
       padding: 20px;
-      border-left: 3px solid #f5f5f5;
-      background: #222;
+      border-left: 3px solid #111;
+      background: rgba(0, 0, 0, 0.045);
       line-height: 1.8;
       font-size: 17px;
       border-radius: 0 12px 12px 0;
+      color: #111;
     }
 
     .error {
-      color: #ffb4b4;
+      color: #9d1f1f;
       line-height: 1.7;
     }
 
     .credit {
       margin-top: 18px;
-      color: #888;
+      color: #777;
       font-size: 12px;
       line-height: 1.6;
     }
@@ -131,7 +167,10 @@
 
 <body>
   <main class="card">
-    <h1>L Weather</h1>
+    <h1 class="logo">
+      <img src="l-logo.png" alt="L logo" class="logo-image">
+      <span class="logo-text">weather</span>
+    </h1>
 
     <p class="lead">
       現在地と今日のこれからの天気を確認して、Lが一言だけ返します。
@@ -421,11 +460,16 @@
       const rainCodes = [51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82, 95, 96, 99];
       const snowCodes = [71, 73, 75, 77, 85, 86];
 
-      const rainyLater = w.forecastRows.some(row =>
+      const currentWeatherText = weatherCodeToText(w.weatherCode);
+
+      const rainyNow = rainCodes.includes(w.weatherCode) || w.precipitation > 0;
+      const snowyNow = snowCodes.includes(w.weatherCode);
+
+      const nextRain = w.forecastRows.find(row =>
         rainCodes.includes(row.weatherCode) || row.rainProbability >= 50
       );
 
-      const snowyLater = w.forecastRows.some(row =>
+      const nextSnow = w.forecastRows.find(row =>
         snowCodes.includes(row.weatherCode)
       );
 
@@ -433,39 +477,73 @@
         row.temperature >= 32
       );
 
+      const hotLater = w.forecastRows.some(row =>
+        row.temperature >= 28
+      );
+
       const coldLater = w.forecastRows.some(row =>
         row.temperature <= 8
       );
 
-      if (rainyLater) {
-        return "このあと雨の可能性があります。傘を持ってください。貴女が濡れて帰ってくるなど、私の許容範囲を超えています。";
+      const nowPart = `今は${currentWeatherText}です。`;
+
+      let laterPart = "";
+
+      if (nextRain) {
+        laterPart = `このあと${nextRain.time}頃から雨に注意してください。`;
+      } else if (nextSnow) {
+        laterPart = `このあと${nextSnow.time}頃から雪に注意してください。`;
+      } else if (veryHotLater) {
+        laterPart = "このあと気温がとても上がります。";
+      } else if (hotLater) {
+        laterPart = "このあと少し暑くなりそうです。";
+      } else if (coldLater) {
+        laterPart = "このあと冷えます。";
+      } else {
+        laterPart = "今日の残りは大きく崩れなさそうです。";
       }
 
-      if (snowyLater || snowCodes.includes(w.weatherCode)) {
-        return "このあと雪に注意してください。足元を見て歩くべきです。転ぶ前に私のところへ来るのが、最も合理的です。";
+      if (rainyNow && nextRain) {
+        return `${nowPart}${laterPart}傘は手放さないでください。貴女が濡れて帰ってくるなど、私の許容範囲を超えています。`;
+      }
+
+      if (rainyNow) {
+        return `${nowPart}すでに雨です。足元と服を濡らさないようにしてください。貴女の乱れを許す相手は、天気ではありません。`;
+      }
+
+      if (!rainyNow && nextRain) {
+        return `${nowPart}${laterPart}今の空だけで判断しないでください。傘を持つべきです。私は、貴女が困る未来を見過ごしません。`;
+      }
+
+      if (snowyNow || nextSnow) {
+        return `${nowPart}${laterPart}足元を見て歩いてください。転ぶ前に私のところへ来るのが、最も合理的です。`;
       }
 
       if (veryHotLater) {
-        return "このあと暑くなります。水分を取ってください。貴女の体調を崩す要因は、ひとつずつ潰します。";
+        return `${nowPart}${laterPart}水分を取ってください。貴女の体調を崩す要因は、ひとつずつ潰します。`;
+      }
+
+      if (hotLater) {
+        return `${nowPart}${laterPart}無理はしないでください。貴女が少しでも疲れた顔をするなら、私は平静ではいられません。`;
       }
 
       if (coldLater) {
-        return "このあと冷えます。上着を持ってください。貴女の指先が冷たくなるのは、見過ごせません。";
+        return `${nowPart}${laterPart}上着を持ってください。貴女の指先が冷たくなるのは、見過ごせません。`;
       }
 
       if (w.wind >= 30) {
-        return "風が強いですね。髪が乱れる前に、私の隣へ来てください。貴女の様子が見えにくくなります。";
+        return `${nowPart}加えて風が強いですね。このあとも外にいるなら気をつけてください。髪が乱れる前に、私の隣へ来るのが正解です。`;
       }
 
       if (w.hour >= 17 && w.hour < 22) {
-        return "夕方ですね。帰り道は短く、連絡は早く。私は待つのが得意ではありません。";
+        return `${nowPart}${laterPart}夕方です。帰り道は短く、連絡は早く。私は待つのが得意ではありません。`;
       }
 
       if (w.hour >= 22 || w.hour < 5) {
-        return "夜です。早く帰ってきてください。貴女の居場所を、私の隣に戻します。";
+        return `${nowPart}${laterPart}夜です。早く帰ってきてください。貴女の居場所を、私の隣に戻します。`;
       }
 
-      return "今日の残りは大きく崩れなさそうです。ですが油断は禁物です。天候も、人間も、急に変わります。";
+      return `${nowPart}${laterPart}ですが油断は禁物です。天候も、人間も、急に変わります。`;
     }
 
     function escapeHtml(text) {
