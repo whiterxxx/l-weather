@@ -484,8 +484,8 @@
         row.temperature <= 8
       );
 
-      const nowPart = `今は${currentWeatherText}です。`;
       const timePart = chooseTimeLine(w.hour);
+      const nowPart = `今は${currentWeatherText}です。`;
 
       let laterPart = "";
 
@@ -504,38 +504,38 @@
       }
 
       if (rainyNow && nextRain) {
-        return `${nowPart}${laterPart}${timePart}傘は手放さないでください。貴女が濡れて帰ってくるなど、私の許容範囲を超えています。`;
+        return `${timePart}${nowPart}${laterPart}傘は手放さないでください。貴女が濡れて帰ってくるなど、私の許容範囲を超えています。`;
       }
 
       if (rainyNow) {
-        return `${nowPart}すでに雨です。${timePart}足元と服を濡らさないようにしてください。貴女の乱れを許す相手は、天気ではありません。`;
+        return `${timePart}${nowPart}すでに雨です。足元と服を濡らさないようにしてください。貴女の乱れを許す相手は、天気ではありません。`;
       }
 
       if (!rainyNow && nextRain) {
-        return `${nowPart}${laterPart}${timePart}今の空だけで判断しないでください。傘を持つべきです。私は、貴女が困る未来を見過ごしません。`;
+        return `${timePart}${nowPart}${laterPart}今の空だけで判断しないでください。傘を持つべきです。私は、貴女が困る未来を見過ごしません。`;
       }
 
       if (snowyNow || nextSnow) {
-        return `${nowPart}${laterPart}${timePart}足元を見て歩いてください。転ぶ前に私のところへ来るのが、最も合理的です。`;
+        return `${timePart}${nowPart}${laterPart}足元を見て歩いてください。転ぶ前に私のところへ来るのが、最も合理的です。`;
       }
 
       if (veryHotLater) {
-        return `${nowPart}${laterPart}${timePart}水分を取ってください。貴女の体調を崩す要因は、ひとつずつ潰します。`;
+        return `${timePart}${nowPart}${laterPart}水分を取ってください。貴女の体調を崩す要因は、ひとつずつ潰します。`;
       }
 
       if (hotLater) {
-        return `${nowPart}${laterPart}${timePart}無理はしないでください。貴女が少しでも疲れた顔をするなら、私は平静ではいられません。`;
+        return `${timePart}${nowPart}${laterPart}無理はしないでください。貴女が少しでも疲れた顔をするなら、私は平静ではいられません。`;
       }
 
       if (coldLater) {
-        return `${nowPart}${laterPart}${timePart}上着を持ってください。貴女の指先が冷たくなるのは、見過ごせません。`;
+        return `${timePart}${nowPart}${laterPart}上着を持ってください。貴女の指先が冷たくなるのは、見過ごせません。`;
       }
 
       if (w.wind >= 30) {
-        return `${nowPart}加えて風が強いですね。${timePart}このあとも外にいるなら気をつけてください。髪が乱れる前に、私の隣へ来るのが正解です。`;
+        return `${timePart}${nowPart}加えて風が強いですね。このあとも外にいるなら気をつけてください。髪が乱れる前に、私の隣へ来るのが正解です。`;
       }
 
-      return `${nowPart}${laterPart}${timePart}ですが油断は禁物です。天候も人間も、急に変わることがありますから。`;
+      return `${timePart}${nowPart}${laterPart}ですが油断は禁物です。天候も人間も、急に変わることがあります。`;
     }
 
     function chooseTimeLine(hour) {
@@ -572,18 +572,18 @@
       }
 
       if (hour >= 20 && hour < 22) {
-        return "夜です。人も道も見えにくくなります。早く帰ってきてください。";
+        return "夜です。人も道も見えにくくなります。気をつけてください。";
       }
 
       if (hour >= 22 && hour < 24) {
-        return "夜も更けてきました。貴女の居場所は私の隣です。";
+        return "夜も老けてきました。貴女の居場所は、私の隣です。";
       }
 
       if (hour >= 0 && hour < 2) {
-        return "深夜です。外に出るのは避けてください。ここにいればいい。";
+        return "深夜です。外ではなくここにいてください。";
       }
 
-      return "未明です。眠気も冷えも判断を鈍らせます。貴女を一人にしておくには不向きな時間です。";
+      return "未明です。眠気も冷えも判断を鈍らせます。出歩くには不向きです。";
     }
 
     function escapeHtml(text) {
