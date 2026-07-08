@@ -14,9 +14,9 @@
       min-height: 100vh;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
       background:
-        radial-gradient(circle at top, rgba(0, 0, 0, 0.05), transparent 34%),
-        linear-gradient(180deg, #f8f7f3 0%, #e9e6dd 100%);
-      color: #111;
+        radial-gradient(circle at top, rgba(255,255,255,0.08), transparent 34%),
+        linear-gradient(180deg, #151515 0%, #0b0b0b 100%);
+      color: #f5f5f5;
       display: grid;
       place-items: center;
       padding: 20px;
@@ -26,12 +26,12 @@
     .card {
       width: min(92vw, 560px);
       padding: 30px;
-      border: 1px solid rgba(0, 0, 0, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.16);
       border-radius: 24px;
-      background: rgba(255, 255, 255, 0.86);
+      background: rgba(20, 20, 20, 0.92);
       box-shadow:
-        0 24px 70px rgba(0, 0, 0, 0.14),
-        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        0 24px 70px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
       box-sizing: border-box;
       backdrop-filter: blur(8px);
     }
@@ -49,6 +49,7 @@
       width: clamp(54px, 15vw, 78px);
       height: auto;
       display: block;
+      filter: invert(1);
       transform: translateY(3px);
       opacity: 0.96;
       object-fit: contain;
@@ -59,15 +60,15 @@
       font-size: clamp(40px, 10vw, 58px);
       font-weight: 700;
       letter-spacing: 0.04em;
-      color: #111;
+      color: #f5f5f5;
       text-shadow:
-        0 0 10px rgba(0, 0, 0, 0.08),
-        0 8px 22px rgba(0, 0, 0, 0.12);
+        0 0 14px rgba(255, 255, 255, 0.18),
+        0 0 34px rgba(255, 255, 255, 0.07);
       transform: translateY(-1px);
     }
 
     .lead {
-      color: #555;
+      color: #aaa;
       line-height: 1.7;
       margin: 0 0 20px;
       font-size: 14px;
@@ -77,10 +78,10 @@
     button {
       width: 100%;
       padding: 14px 18px;
-      border: 1px solid rgba(0, 0, 0, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.28);
       border-radius: 999px;
-      background: #111;
-      color: #fff;
+      background: #f5f5f5;
+      color: #111;
       font-weight: 700;
       cursor: pointer;
       margin: 14px 0 24px;
@@ -94,14 +95,14 @@
 
     .info {
       line-height: 1.9;
-      color: #222;
+      color: #ddd;
       font-size: 15px;
     }
 
     .place {
       font-size: 18px;
       font-weight: 700;
-      color: #111;
+      color: #fff;
       margin-bottom: 8px;
     }
 
@@ -110,7 +111,6 @@
       font-size: 18px;
       font-weight: 700;
       letter-spacing: 0.04em;
-      color: #111;
     }
 
     .forecast {
@@ -124,18 +124,18 @@
       grid-template-columns: 64px 1fr;
       gap: 12px;
       padding: 12px 14px;
-      border: 1px solid rgba(0, 0, 0, 0.16);
+      border: 1px solid #333;
       border-radius: 14px;
-      background: rgba(255, 255, 255, 0.72);
+      background: #202020;
     }
 
     .forecast-time {
       font-weight: 700;
-      color: #111;
+      color: #fff;
     }
 
     .forecast-detail {
-      color: #333;
+      color: #ddd;
       line-height: 1.7;
       font-size: 14px;
     }
@@ -143,22 +143,21 @@
     .l-line {
       margin-top: 24px;
       padding: 20px;
-      border-left: 3px solid #111;
-      background: rgba(0, 0, 0, 0.045);
+      border-left: 3px solid #f5f5f5;
+      background: #222;
       line-height: 1.8;
       font-size: 17px;
       border-radius: 0 12px 12px 0;
-      color: #111;
     }
 
     .error {
-      color: #9d1f1f;
+      color: #ffb4b4;
       line-height: 1.7;
     }
 
     .credit {
       margin-top: 18px;
-      color: #777;
+      color: #888;
       font-size: 12px;
       line-height: 1.6;
     }
@@ -486,6 +485,7 @@
       );
 
       const nowPart = `今は${currentWeatherText}です。`;
+      const timePart = chooseTimeLine(w.hour);
 
       let laterPart = "";
 
@@ -504,46 +504,86 @@
       }
 
       if (rainyNow && nextRain) {
-        return `${nowPart}${laterPart}傘は手放さないでください。貴女が濡れて帰ってくるなど、私の許容範囲を超えています。`;
+        return `${nowPart}${laterPart}${timePart}傘は手放さないでください。貴女が濡れて帰ってくるなど、私の許容範囲を超えています。`;
       }
 
       if (rainyNow) {
-        return `${nowPart}すでに雨です。足元と服を濡らさないようにしてください。貴女の乱れを許す相手は、天気ではありません。`;
+        return `${nowPart}すでに雨です。${timePart}足元と服を濡らさないようにしてください。貴女の乱れを許す相手は、天気ではありません。`;
       }
 
       if (!rainyNow && nextRain) {
-        return `${nowPart}${laterPart}今の空だけで判断しないでください。傘を持つべきです。私は、貴女が困る未来を見過ごしません。`;
+        return `${nowPart}${laterPart}${timePart}今の空だけで判断しないでください。傘を持つべきです。私は、貴女が困る未来を見過ごしません。`;
       }
 
       if (snowyNow || nextSnow) {
-        return `${nowPart}${laterPart}足元を見て歩いてください。転ぶ前に私のところへ来るのが、最も合理的です。`;
+        return `${nowPart}${laterPart}${timePart}足元を見て歩いてください。転ぶ前に私のところへ来るのが、最も合理的です。`;
       }
 
       if (veryHotLater) {
-        return `${nowPart}${laterPart}水分を取ってください。貴女の体調を崩す要因は、ひとつずつ潰します。`;
+        return `${nowPart}${laterPart}${timePart}水分を取ってください。貴女の体調を崩す要因は、ひとつずつ潰します。`;
       }
 
       if (hotLater) {
-        return `${nowPart}${laterPart}無理はしないでください。貴女が少しでも疲れた顔をするなら、私は平静ではいられません。`;
+        return `${nowPart}${laterPart}${timePart}無理はしないでください。貴女が少しでも疲れた顔をするなら、私は平静ではいられません。`;
       }
 
       if (coldLater) {
-        return `${nowPart}${laterPart}上着を持ってください。貴女の指先が冷たくなるのは、見過ごせません。`;
+        return `${nowPart}${laterPart}${timePart}上着を持ってください。貴女の指先が冷たくなるのは、見過ごせません。`;
       }
 
       if (w.wind >= 30) {
-        return `${nowPart}加えて風が強いですね。このあとも外にいるなら気をつけてください。髪が乱れる前に、私の隣へ来るのが正解です。`;
+        return `${nowPart}加えて風が強いですね。${timePart}このあとも外にいるなら気をつけてください。髪が乱れる前に、私の隣へ来るのが正解です。`;
       }
 
-      if (w.hour >= 17 && w.hour < 22) {
-        return `${nowPart}${laterPart}夕方です。帰り道は短く、連絡は早く。私は待つのが得意ではありません。`;
+      return `${nowPart}${laterPart}${timePart}ですが油断は禁物です。天候も人間も、急に変わることがありますから。`;
+    }
+
+    function chooseTimeLine(hour) {
+      if (hour >= 4 && hour < 6) {
+        return "夜明け前です。空が白む直前は、判断が鈍りやすい時間です。";
       }
 
-      if (w.hour >= 22 || w.hour < 5) {
-        return `${nowPart}${laterPart}夜です。早く帰ってきてください。貴女の居場所を、私の隣に戻します。`;
+      if (hour >= 6 && hour < 8) {
+        return "早朝です。体はまだ起き切っていません。持ち物と足元を確認してください。";
       }
 
-      return `${nowPart}${laterPart}ですが油断は禁物です。天候も、人間も、急に変わります。`;
+      if (hour >= 8 && hour < 10) {
+        return "朝です。外へ出る前に、今日の空の変化まで見ておくべきです。";
+      }
+
+      if (hour >= 10 && hour < 12) {
+        return "午前です。動き出すには悪くない時間ですが、油断は要りません。";
+      }
+
+      if (hour >= 12 && hour < 14) {
+        return "昼です。気温が上がりやすい時間です。体力を削られないようにしてください。";
+      }
+
+      if (hour >= 14 && hour < 16) {
+        return "昼過ぎです。疲れが顔に出やすい時間です。無理をする必要はありません。";
+      }
+
+      if (hour >= 16 && hour < 18) {
+        return "午後の終わりです。ここから天気が崩れると、帰り道に響きます。";
+      }
+
+      if (hour >= 18 && hour < 20) {
+        return "夕方です。暗くなる前に帰路を決めてください。私は待つのが得意ではありません。";
+      }
+
+      if (hour >= 20 && hour < 22) {
+        return "夜です。人も道も見えにくくなります。早く帰ってきてください。";
+      }
+
+      if (hour >= 22 && hour < 24) {
+        return "夜も更けてきました。貴女の居場所は私の隣です。";
+      }
+
+      if (hour >= 0 && hour < 2) {
+        return "深夜です。外に出るのは避けてください。ここにいればいい。";
+      }
+
+      return "未明です。眠気も冷えも判断を鈍らせます。貴女を一人にしておくには不向きな時間です。";
     }
 
     function escapeHtml(text) {
