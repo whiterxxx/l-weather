@@ -508,7 +508,7 @@
       }
 
       if (rainyNow) {
-        return `${timePart}${nowPart}すでに雨です。足元と服を濡らさないようにしてください。貴女の乱れを許す相手は、天気ではありません。`;
+        return `${timePart}${nowPart}すでに雨です。足元と服を濡らさないようにしてください。`;
       }
 
       if (!rainyNow && nextRain) {
@@ -524,11 +524,11 @@
       }
 
       if (hotLater) {
-        return `${timePart}${nowPart}${laterPart}無理はしないでください。貴女が少しでも疲れた顔をするなら、私は平静ではいられません。`;
+        return `${timePart}${nowPart}${laterPart}無理はしないでください。貴女が疲れた顔をしていると、私は平静ではいられません。`;
       }
 
       if (coldLater) {
-        return `${timePart}${nowPart}${laterPart}上着を持ってください。貴女の指先が冷たくなるのは、見過ごせません。`;
+        return `${timePart}${nowPart}${laterPart}上着を持ってください。貴女の指先が冷たくなるのは見過ごせません。`;
       }
 
       if (w.wind >= 30) {
