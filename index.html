@@ -315,7 +315,7 @@
         minute: "2-digit"
       });
 
-      const weatherText = weatherCodeToText(weatherCode);
+      const weatherDisplay = weatherCodeToDisplay(weatherCode);
       const forecastRows = buildTodayForecast(weather);
 
       const lLine = chooseLLine({
@@ -332,7 +332,7 @@
         <div class="info">
           <div class="place">${escapeHtml(placeName)}</div>
           <div>時刻：${timeText}</div>
-          <div>現在の天気：${weatherText}</div>
+          <div>現在の天気：${weatherDisplay}</div>
           <div>気温：${temperature}℃</div>
           <div>体感：${apparent}℃</div>
           <div>降水量：${precipitation} mm</div>
@@ -346,7 +346,7 @@
             <div class="forecast-row">
               <div class="forecast-time">${row.time}</div>
               <div class="forecast-detail">
-                ${row.weatherText}<br>
+                ${row.weatherDisplay}<br>
                 気温：${row.temperature}℃ / 降水確率：${row.rainProbability}%
               </div>
             </div>
@@ -402,6 +402,7 @@
           time: time.slice(11, 16),
           weatherCode: hourly.weather_code[i],
           weatherText: weatherCodeToText(hourly.weather_code[i]),
+          weatherDisplay: weatherCodeToDisplay(hourly.weather_code[i]),
           temperature: hourly.temperature_2m[i],
           rainProbability: hourly.precipitation_probability[i] ?? 0
         });
@@ -412,10 +413,10 @@
 
     function weatherCodeToText(code) {
       const map = {
-        0: "快晴☀️",
-        1: "晴れ☀️",
-        2: "一部くもり🌤️",
-        3: "くもり☁️",
+        0: "快晴",
+        1: "晴れ",
+        2: "一部くもり",
+        3: "くもり",
 
         45: "霧",
         48: "霧氷",
@@ -427,32 +428,63 @@
         56: "弱い着氷性の霧雨",
         57: "強い着氷性の霧雨",
 
-        61: "弱い雨☔️",
-        63: "雨☔️",
-        65: "強い雨☔️",
+        61: "弱い雨",
+        63: "雨",
+        65: "強い雨",
 
         66: "弱い着氷性の雨",
         67: "強い着氷性の雨",
 
-        71: "弱い雪❄️",
-        73: "雪❄️",
-        75: "強い雪❄️",
+        71: "弱い雪",
+        73: "雪",
+        75: "強い雪",
 
-        77: "雪粒❄️",
+        77: "雪粒",
 
-        80: "弱いにわか雨☔️",
-        81: "にわか雨☔️",
-        82: "強いにわか雨☔️",
+        80: "弱いにわか雨",
+        81: "にわか雨",
+        82: "強いにわか雨",
 
-        85: "弱いにわか雪❄️",
-        86: "強いにわか雪❄️",
+        85: "弱いにわか雪",
+        86: "強いにわか雪",
 
-        95: "雷雨⚡️",
-        96: "雷雨と雹⚡️",
-        99: "強い雷雨と雹⚡️"
+        95: "雷雨",
+        96: "雷雨と雹",
+        99: "強い雷雨と雹"
       };
 
       return map[code] || "不明";
+    }
+
+    function weatherCodeToEmoji(code) {
+      if ([0, 1].includes(code)) {
+        return "☀️";
+      }
+
+      if ([2, 3, 45, 48].includes(code)) {
+        return "☁️";
+      }
+
+      if ([51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82].includes(code)) {
+        return "☔️";
+      }
+
+      if ([71, 73, 75, 77, 85, 86].includes(code)) {
+        return "❄️";
+      }
+
+      if ([95, 96, 99].includes(code)) {
+        return "⚡️";
+      }
+
+      return "";
+    }
+
+    function weatherCodeToDisplay(code) {
+      const emoji = weatherCodeToEmoji(code);
+      const text = weatherCodeToText(code);
+
+      return emoji ? `${emoji} ${text}` : text;
     }
 
     function chooseLLine(w) {
@@ -576,7 +608,7 @@
       }
 
       if (hour >= 22 && hour < 24) {
-        return "夜も更けてきました。……人肌恋しくなりませんか？";
+        return "夜も更けてきました。貴女の居場所は、私の隣です。";
       }
 
       if (hour >= 0 && hour < 2) {
