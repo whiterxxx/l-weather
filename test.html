@@ -4,9 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>L WEATHER</title>
+  <title>L weather</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@400;500;700;900&display=swap" rel="stylesheet">
 
   <style>
     body {
@@ -37,16 +37,29 @@
     }
 
     .logo {
-      margin: 0 0 16px;
-      font-family: "Cinzel Decorative", serif;
-      font-size: clamp(30px, 8vw, 44px);
+      margin: 0 0 14px;
+      font-family: "Grenze Gotisch", serif;
       font-weight: 700;
-      letter-spacing: 0.12em;
+      letter-spacing: 0.04em;
       text-align: center;
       color: #f5f5f5;
       text-shadow:
-        0 0 14px rgba(255, 255, 255, 0.16),
-        0 0 32px rgba(255, 255, 255, 0.06);
+        0 0 14px rgba(255, 255, 255, 0.18),
+        0 0 34px rgba(255, 255, 255, 0.07);
+      line-height: 0.95;
+    }
+
+    .logo-l {
+      font-size: clamp(58px, 16vw, 86px);
+      font-weight: 900;
+      display: inline-block;
+      transform: translateY(4px);
+    }
+
+    .logo-text {
+      font-size: clamp(38px, 10vw, 56px);
+      font-weight: 700;
+      margin-left: 4px;
     }
 
     .lead {
@@ -148,7 +161,9 @@
 
 <body>
   <main class="card">
-    <h1 class="logo">L WEATHER</h1>
+    <h1 class="logo">
+      <span class="logo-l">L</span><span class="logo-text">weather</span>
+    </h1>
 
     <p class="lead">
       現在地と今日のこれからの天気を確認して、Lが一言だけ返します。
