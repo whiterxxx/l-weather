@@ -150,3 +150,34 @@ h2 {
   font-size: 12px;
   line-height: 1.6;
 }
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.72;
+  transform: none;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 0;
+  color: #ddd;
+  line-height: 1.7;
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.22);
+  border-top-color: #f5f5f5;
+  border-radius: 50%;
+  flex: 0 0 auto;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
