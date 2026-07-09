@@ -1,49 +1,77 @@
 const result = document.getElementById("result");
 const button = document.getElementById("checkButton");
 
-button.addEventListener("click", () => {
+button.addEventListener("click", handleWeatherCheck);
+
+async function handleWeatherCheck() {
   if (!navigator.geolocation) {
     result.innerHTML = `<p class="error">このブラウザでは位置情報が使えません。</p>`;
     return;
   }
 
-  result.textContent = "現在地を確認しています……";
+  setLoading(true, "現在地を確認しています……");
 
-  navigator.geolocation.getCurrentPosition(
-    async (position) => {
-      const lat = position.coords.latitude;
-      const lon = position.coords.longitude;
+  try {
+    const position = await getCurrentPosition();
 
-      try {
-        const weather = await fetchWeather(lat, lon);
-        const placeName = await fetchPlaceName(lat, lon);
+    const lat = position.coords.latitude;
+    const lon = position.coords.longitude;
 
-        showWeather({
-          placeName,
-          weather
-        });
-      } catch (error) {
-        result.innerHTML = `
-          <p class="error">
-            天気の取得に失敗しました。通信状態を確認して、もう一度試してください。
-          </p>
-        `;
-      }
-    },
-    () => {
+    setLoading(true, "天気と場所を解析しています……");
+
+    const weather = await fetchWeather(lat, lon);
+    const placeName = await fetchPlaceName(lat, lon);
+
+    showWeather({
+      placeName,
+      weather
+    });
+  } catch (error) {
+    if (error && error.code) {
       result.innerHTML = `
         <p class="error">
           位置情報が許可されませんでした。iPhoneの設定、またはSafariの位置情報設定を確認してください。
         </p>
       `;
-    },
-    {
-      enableHighAccuracy: false,
-      timeout: 10000,
-      maximumAge: 300000
+    } else {
+      result.innerHTML = `
+        <p class="error">
+          天気の取得に失敗しました。通信状態を確認して、もう一度試してください。
+        </p>
+      `;
     }
-  );
-});
+  } finally {
+    setLoading(false);
+  }
+}
+
+function getCurrentPosition() {
+  return new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(
+      resolve,
+      reject,
+      {
+        enableHighAccuracy: false,
+        timeout: 10000,
+        maximumAge: 300000
+      }
+    );
+  });
+}
+
+function setLoading(isLoading, message = "") {
+  button.disabled = isLoading;
+  button.textContent = isLoading ? "解析中です" : "天気を確認する";
+
+  if (isLoading && message) {
+    result.innerHTML = `
+      <div class="loading">
+        <span class="spinner" aria-hidden="true"></span>
+        <span>${message}</span>
+      </div>
+    `;
+  }
+}
 
 async function fetchWeather(lat, lon) {
   const url =
