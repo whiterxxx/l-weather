@@ -1,1 +1,241 @@
+* {
+  box-sizing: border-box;
+}
 
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
+  color: #f5f5f5;
+  background:
+    radial-gradient(circle at top left, rgba(90, 90, 120, 0.28), transparent 34%),
+    radial-gradient(circle at bottom right, rgba(120, 40, 70, 0.2), transparent 32%),
+    linear-gradient(135deg, #050507 0%, #111119 48%, #07070a 100%);
+}
+
+.app {
+  width: min(920px, 100%);
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 48px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero {
+  width: 100%;
+  padding: 36px 24px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 28px;
+  background: rgba(8, 8, 12, 0.76);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.48);
+  backdrop-filter: blur(10px);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.l-logo {
+  display: block;
+  width: min(260px, 72vw);
+  height: auto;
+  margin: 0 auto 26px;
+  filter: invert(1) brightness(1.45);
+  opacity: 0.94;
+}
+
+.lead {
+  max-width: 640px;
+  margin: 0 auto 28px;
+  color: #d7d7df;
+  font-size: 1rem;
+  line-height: 1.9;
+  text-align: center;
+}
+
+.check-button {
+  display: block;
+  width: 100%;
+  max-width: 340px;
+  margin: 0 auto;
+  border: 0;
+  border-radius: 999px;
+  padding: 15px 24px;
+  color: #08080b;
+  background: #f5f5f5;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    opacity 0.18s ease;
+}
+
+.check-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(255, 255, 255, 0.14);
+}
+
+.check-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.56;
+  transform: none;
+  box-shadow: none;
+}
+
+.result {
+  margin-top: 28px;
+}
+
+.idle-message {
+  margin: 0;
+  color: #b9b9c7;
+  line-height: 1.8;
+  text-align: center;
+}
+
+.weather-card {
+  position: relative;
+  overflow: hidden;
+  padding: 24px;
+  border-radius: 24px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
+    rgba(0, 0, 0, 0.34);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.weather-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.13), transparent 34%);
+  pointer-events: none;
+}
+
+.weather-card > * {
+  position: relative;
+}
+
+.location-line {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1.8;
+}
+
+.weather-line,
+.forecast-line {
+  margin: 14px 0 0;
+  color: #e6e6ec;
+  line-height: 1.9;
+}
+
+.detail-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 22px 0 0;
+}
+
+.detail-item {
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.075);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.detail-label {
+  display: block;
+  margin-bottom: 6px;
+  color: #bdbdcc;
+  font-size: 0.75rem;
+}
+
+.detail-value {
+  display: block;
+  color: #ffffff;
+  font-size: 1.14rem;
+  font-weight: 700;
+}
+
+.l-line {
+  margin: 24px 0 0;
+  padding: 20px 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+  font-size: 1.06rem;
+  line-height: 2;
+  letter-spacing: 0.04em;
+}
+
+.loading {
+  padding: 24px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.06);
+  text-align: center;
+}
+
+.spinner {
+  width: 38px;
+  height: 38px;
+  margin: 0 auto 14px;
+  border: 4px solid rgba(255, 255, 255, 0.18);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+.loading p {
+  margin: 0;
+  color: #dddde8;
+  line-height: 1.8;
+}
+
+.error {
+  margin: 0;
+  padding: 18px;
+  border-radius: 18px;
+  color: #ffd0d0;
+  background: rgba(120, 20, 40, 0.26);
+  border: 1px solid rgba(255, 120, 150, 0.22);
+  line-height: 1.8;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 640px) {
+  .app {
+    padding: 24px 14px;
+  }
+
+  .hero {
+    padding: 30px 18px;
+    border-radius: 24px;
+  }
+
+  .l-logo {
+    width: min(230px, 74vw);
+  }
+
+  .check-button {
+    max-width: none;
+  }
+
+  .detail-list {
+    grid-template-columns: 1fr;
+  }
+}
