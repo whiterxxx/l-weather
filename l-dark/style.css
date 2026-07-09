@@ -547,3 +547,22 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+.credits {
+  margin: 22px 0 0;
+  color: rgba(245, 245, 245, 0.46);
+  font-size: 0.72rem;
+  line-height: 1.7;
+  text-align: center;
+}
+
+.credits a {
+  color: rgba(245, 245, 245, 0.72);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(245, 245, 245, 0.28);
+}
+
+.credits a:hover {
+  color: #ffffff;
+  border-bottom-color: #ffffff;
+}
