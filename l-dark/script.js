@@ -478,7 +478,7 @@ function getContextualLine({
   if (
     timeCategory &&
     timeLines[timeCategory] &&
-    Math.random() < 0.42
+    Math.random() < 0.6
   ) {
     return applyVariables(
       randomItem(timeLines[timeCategory]),
