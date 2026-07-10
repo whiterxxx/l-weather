@@ -60,10 +60,16 @@ async function fetchPlaceName(lat, lon) {
 
   const data = await response.json();
 
+  const city = data.city || "";
+  const locality = data.locality || "";
+
+  if (city && locality && city !== locality) {
+    return `${city}${locality}`;
+  }
+
   return (
-    data.city ||
-    data.locality ||
-    data.localityInfo?.administrative?.find((item) => item.adminLevel === 8)?.name ||
+    locality ||
+    city ||
     data.principalSubdivision ||
     data.countryName ||
     "今いる場所"
@@ -112,11 +118,16 @@ function showWeather(placeName, weather) {
     rainProbability
   );
 
-  const possessiveLine = getRandomPossessiveLine(placeName, currentWeatherText);
+  const possessiveLine = getRandomPossessiveLine(
+    placeName,
+    currentWeatherText
+  );
 
   result.innerHTML = `
     <article class="weather-card">
-      <p class="location-line">今、${escapeHtml(placeName)}にいるんですね。</p>
+      <p class="location-line">
+        今、${escapeHtml(placeName)}にいるんですね。
+      </p>
 
       <p class="weather-line">
         そちらの今の天気は${escapeHtml(currentWeatherText)}です。
@@ -130,27 +141,37 @@ function showWeather(placeName, weather) {
       <div class="detail-list">
         <div class="detail-item">
           <span class="detail-label">現在の天気</span>
-          <span class="detail-value">${escapeHtml(currentWeatherText)}</span>
+          <span class="detail-value">
+            ${escapeHtml(currentWeatherText)}
+          </span>
         </div>
 
         <div class="detail-item">
           <span class="detail-label">現在の気温</span>
-          <span class="detail-value">${currentTemperature}℃</span>
+          <span class="detail-value">
+            ${currentTemperature}℃
+          </span>
         </div>
 
         <div class="detail-item">
           <span class="detail-label">約3時間後</span>
-          <span class="detail-value">${escapeHtml(nextWeatherText)}</span>
+          <span class="detail-value">
+            ${escapeHtml(nextWeatherText)}
+          </span>
         </div>
       </div>
 
-      <p class="l-line">${escapeHtml(possessiveLine)}</p>
+      <p class="l-line">
+        ${escapeHtml(possessiveLine)}
+      </p>
     </article>
   `;
 }
 
 function getNextForecast(hourly, currentTime, hoursAhead) {
-  let currentIndex = hourly.time.findIndex((time) => time >= currentTime);
+  let currentIndex = hourly.time.findIndex(
+    (time) => time >= currentTime
+  );
 
   if (currentIndex === -1) {
     currentIndex = 0;
@@ -166,13 +187,19 @@ function getNextForecast(hourly, currentTime, hoursAhead) {
     time: hourly.time[targetIndex],
     weatherCode: hourly.weather_code[targetIndex],
     temperature: hourly.temperature_2m[targetIndex],
-    precipitationProbability: hourly.precipitation_probability
-      ? hourly.precipitation_probability[targetIndex]
-      : null
+    precipitationProbability:
+      hourly.precipitation_probability
+        ? hourly.precipitation_probability[targetIndex]
+        : null
   };
 }
 
-function buildForecastSentence(currentWeatherText, nextWeatherText, nextTemperature, rainProbability) {
+function buildForecastSentence(
+  currentWeatherText,
+  nextWeatherText,
+  nextTemperature,
+  rainProbability
+) {
   const rainText =
     typeof rainProbability === "number"
       ? `降水確率は${rainProbability}%です。`
@@ -220,7 +247,10 @@ function weatherCodeToText(code) {
   return weatherMap[code] || "不明な天気";
 }
 
-function getRandomPossessiveLine(placeName, currentWeatherText) {
+function getRandomPossessiveLine(
+  placeName,
+  currentWeatherText
+) {
   const lines = [
     `……${placeName}ですか。把握しました。貴女の居場所は常に把握しています。`,
     `その街の空より、私の視線のほうが近いです。貴女がどこにいても、私は必ず見つけます。`,
@@ -253,7 +283,9 @@ function setLoading(message) {
 
 function setButtonDisabled(isDisabled) {
   button.disabled = isDisabled;
-  button.textContent = isDisabled ? "確認しています……" : "Lから連絡を受ける";
+  button.textContent = isDisabled
+    ? "確認しています……"
+    : "Lから連絡を受ける";
 }
 
 function getFriendlyError(error) {
@@ -262,11 +294,11 @@ function getFriendlyError(error) {
   }
 
   if (error.code === 2) {
-    return "現在地を取得できませんでした。電波やGPSの状態を確認してみてください。";
+    return "現在地を取得できませんでした。電波やGPSの状態を確認してもらえますか。";
   }
 
   if (error.code === 3) {
-    return "位置情報の取得に時間がかかりすぎました。もう一度試してみてください。";
+    return "位置情報の取得に時間がかかりすぎました。……もう一度試してみてください。";
   }
 
   return error.message || "……何かがうまくいきませんでした。";
