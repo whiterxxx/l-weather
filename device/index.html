@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta
+    name="theme-color"
+    content="#ffffff"
+  >
+
+  <meta
+    name="description"
+    content="Lからの通信を受信するための専用端末"
+  >
+
+  <title>L DEVICE</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <noscript>
+    <div class="noscript-message">
+      この端末の起動にはJavaScriptが必要です。
+    </div>
+  </noscript>
+
+
+  <!-- 起動画面 -->
+  <div id="bootScreen" class="boot-screen">
+
+    <div class="boot-content">
+
+      <img
+        src="logo.png"
+        alt="L"
+        class="boot-logo"
+      >
+
+      <p class="boot-title">
+        PRIVATE COMMUNICATION DEVICE
+      </p>
+
+      <p id="bootMessage" class="boot-message">
+        INITIALIZING...
+      </p>
+
+      <div class="boot-progress">
+        <div
+          id="bootProgressBar"
+          class="boot-progress-bar"
+        ></div>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- 端末本体 -->
+  <main id="terminal" class="terminal terminal-hidden">
+
+    <header class="terminal-header">
+
+      <div class="terminal-brand">
+
+        <img
+          src="logo.png"
+          alt="L"
+          class="header-logo"
+        >
+
+        <div>
+          <p class="brand-title">
+            L DEVICE
+          </p>
+
+          <p class="brand-subtitle">
+            RECEIVE-ONLY COMMUNICATION TERMINAL
+          </p>
+        </div>
+
+      </div>
+
+
+      <div class="connection-status">
+
+        <span
+          id="connectionLamp"
+          class="connection-lamp"
+          aria-hidden="true"
+        ></span>
+
+        <div>
+          <p class="connection-label">
+            CONNECTION
+          </p>
+
+          <p
+            id="connectionText"
+            class="connection-value"
+          >
+            SECURE
+          </p>
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <!-- 現在時刻など -->
+    <section
+      class="system-panel"
+      aria-label="端末情報"
+    >
+
+      <div class="system-item">
+
+        <span class="system-label">
+          CURRENT TIME
+        </span>
+
+        <time
+          id="currentTime"
+          class="system-value"
+        >
+          --:--:--
+        </time>
+
+      </div>
+
+
+      <div class="system-item">
+
+        <span class="system-label">
+          CURRENT DATE
+        </span>
+
+        <time
+          id="currentDate"
+          class="system-value"
+        >
+          ---- / -- / --
+        </time>
+
+      </div>
+
+
+      <div class="system-item">
+
+        <span class="system-label">
+          SESSION
+        </span>
+
+        <span
+          id="sessionTime"
+          class="system-value"
+        >
+          00:00:00
+        </span>
+
+      </div>
+
+
+      <div class="system-item">
+
+        <span class="system-label">
+          RECEIVED
+        </span>
+
+        <span
+          id="receivedCount"
+          class="system-value"
+        >
+          0
+        </span>
+
+      </div>
+
+    </section>
+
+
+    <!-- 通信ログ -->
+    <section class="communication-panel">
+
+      <div class="section-heading">
+
+        <div>
+          <p class="section-code">
+            CHANNEL 01
+          </p>
+
+          <h1 class="section-title">
+            COMMUNICATION LOG
+          </h1>
+        </div>
+
+        <span
+          id="onlineIndicator"
+          class="online-indicator"
+        >
+          ONLINE
+        </span>
+
+      </div>
+
+
+      <div
+        id="messageLog"
+        class="message-log"
+        aria-live="polite"
+        aria-label="受信した通信"
+      >
+
+        <article class="message system-message">
+
+          <div class="message-header">
+
+            <time class="message-time">
+              SYSTEM
+            </time>
+
+            <span class="message-sender">
+              TERMINAL
+            </span>
+
+          </div>
+
+          <p class="message-text">
+            暗号化通信路を確立しています。
+          </p>
+
+        </article>
+
+      </div>
+
+
+      <div
+        id="typingIndicator"
+        class="typing-indicator hidden"
+      >
+
+        <div class="typing-dots">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+
+        <p>
+          通信を受信しています
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- 集中タイマー -->
+    <section class="appointment-panel">
+
+      <div class="section-heading">
+
+        <div>
+          <p class="section-code">
+            APPOINTMENT SYSTEM
+          </p>
+
+          <h2 class="section-title">
+            NEXT COMMUNICATION
+          </h2>
+        </div>
+
+      </div>
+
+
+      <p class="appointment-description">
+        次の通信までの時間を設定します。
+        約束の時刻になると、Lから通信が届きます。
+      </p>
+
+
+      <div class="preset-buttons">
+
+        <button
+          type="button"
+          class="time-button"
+          data-minutes="5"
+        >
+          <span class="time-number">05</span>
+          <span class="time-unit">MIN</span>
+        </button>
+
+
+        <button
+          type="button"
+          class="time-button"
+          data-minutes="15"
+        >
+          <span class="time-number">15</span>
+          <span class="time-unit">MIN</span>
+        </button>
+
+
+        <button
+          type="button"
+          class="time-button"
+          data-minutes="25"
+        >
+          <span class="time-number">25</span>
+          <span class="time-unit">MIN</span>
+        </button>
+
+
+        <button
+          type="button"
+          class="time-button"
+          data-minutes="45"
+        >
+          <span class="time-number">45</span>
+          <span class="time-unit">MIN</span>
+        </button>
+
+
+        <button
+          type="button"
+          class="time-button"
+          data-minutes="60"
+        >
+          <span class="time-number">60</span>
+          <span class="time-unit">MIN</span>
+        </button>
+
+      </div>
+
+
+      <!-- 自由入力 -->
+      <div class="custom-timer">
+
+        <label
+          for="customMinutes"
+          class="custom-label"
+        >
+          CUSTOM
+        </label>
+
+        <div class="custom-controls">
+
+          <input
