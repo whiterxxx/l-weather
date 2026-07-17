@@ -668,7 +668,7 @@ function buildMemoryLine({
 
   const streakText = streak >= 2
     ? `${streak}日連続で私に居場所を知らせてくれています。嬉しいです。`
-    : "今日の記録も残しました。";
+    : "今日の記録もしっかり残しました。";
 
   return `前回から${elapsedText}です。${placeText}これで${accessCount}回目の確認です。${streakText}`;
 }
