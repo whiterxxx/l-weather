@@ -1,11 +1,22 @@
+'use strict';
+
 const result = document.getElementById("result");
 const button = document.getElementById("checkButton");
 
+const STORAGE_KEYS = {
+  lastPlaceName: "lDarkWeatherLastPlaceName",
+  lastCheckedAt: "lDarkWeatherLastCheckedAt",
+  accessCount: "lDarkWeatherAccessCount",
+  streak: "lDarkWeatherStreak",
+  lastDateKey: "lDarkWeatherLastDateKey",
+  lastLine: "lDarkWeatherLastLine"
+};
+
 const normalLines = [
-  `……${"${placeName}"}ですか。把握しました。貴女の居場所は常に把握しています。`,
+  `……\${placeName}ですか。把握しました。貴女の居場所は常に把握しています。`,
   `その街の空より、私の視線のほうが近いです。貴女がどこにいても、私は必ず見つけます。`,
   `今そこにいるんですね。いいです。その場所は私の監視下です。`,
-  `${"${currentWeatherText}"}ですか。貴女が外にいると常に気になります。貴女を濡らす雨も、冷やす風も、気に入りません。`,
+  `\${currentWeatherText}ですか。貴女が外にいると常に気になります。貴女を濡らす雨も、冷やす風も、気に入りません。`,
   `勝手に遠くへ行くのは感心しません。貴女の現在地は常に私が把握しています。`,
   `貴女がそこで何をしているのか気になります。隠しても無駄ですが。`,
   `外の空気を吸うのは構いません。でも、貴女が帰る場所は私の腕の中です。`,
@@ -317,13 +328,22 @@ function showWeather(placeName, weather) {
     rainProbability
   );
 
+  const previousState = readMemoryState();
+
   const possessiveLine = getContextualLine({
     placeName,
     currentWeatherText,
     weatherCode,
     temperature: currentTemperature,
     windSpeed,
-    currentTime: current.time
+    currentTime: current.time,
+    lastLine: previousState.lastLine
+  });
+
+  const visitMemory = createVisitMemory({
+    placeName,
+    currentTime: current.time,
+    previousState
   });
 
   result.innerHTML = `
@@ -365,10 +385,20 @@ function showWeather(placeName, weather) {
       </div>
 
       <p class="l-line">
+        ${escapeHtml(visitMemory.memoryLine)}<br><br>
         ${escapeHtml(possessiveLine)}
       </p>
     </article>
   `;
+
+  saveMemoryState({
+    placeName,
+    checkedAt: visitMemory.checkedAt,
+    accessCount: visitMemory.accessCount,
+    streak: visitMemory.streak,
+    dateKey: visitMemory.dateKey,
+    lastLine: possessiveLine
+  });
 }
 
 function getNextForecast(hourly, currentTime, hoursAhead) {
@@ -378,11 +408,11 @@ function getNextForecast(hourly, currentTime, hoursAhead) {
     throw new Error("時間別予報を取得できませんでした。");
   }
 
-  let currentIndex = times.findIndex((time) => time >= currentTime);
+  const nextIndex = times.findIndex((time) => time > currentTime);
 
-  if (currentIndex === -1) {
-    currentIndex = 0;
-  }
+  const currentIndex = nextIndex === -1
+    ? times.length - 1
+    : Math.max(0, nextIndex - 1);
 
   const targetIndex = Math.min(
     currentIndex + hoursAhead,
@@ -425,7 +455,8 @@ function getContextualLine({
   weatherCode,
   temperature,
   windSpeed,
-  currentTime
+  currentTime,
+  lastLine
 }) {
   const variables = {
     placeName,
@@ -433,7 +464,7 @@ function getContextualLine({
   };
 
   if (Math.random() < 0.02) {
-    return applyVariables(randomItem(rareLines), variables);
+    return chooseDifferentLine(rareLines, variables, lastLine);
   }
 
   const weatherCategory = getWeatherCategory({
@@ -468,9 +499,10 @@ function getContextualLine({
     weatherLines[weatherCategory] &&
     Math.random() < weatherChance[weatherCategory]
   ) {
-    return applyVariables(
-      randomItem(weatherLines[weatherCategory]),
-      variables
+    return chooseDifferentLine(
+      weatherLines[weatherCategory],
+      variables,
+      lastLine
     );
   }
 
@@ -479,13 +511,14 @@ function getContextualLine({
     timeLines[timeCategory] &&
     Math.random() < 0.6
   ) {
-    return applyVariables(
-      randomItem(timeLines[timeCategory]),
-      variables
+    return chooseDifferentLine(
+      timeLines[timeCategory],
+      variables,
+      lastLine
     );
   }
 
-  return applyVariables(randomItem(normalLines), variables);
+  return chooseDifferentLine(normalLines, variables, lastLine);
 }
 
 function getWeatherCategory({
@@ -560,6 +593,232 @@ function getHourFromLocalTime(currentTime) {
   return new Date().getHours();
 }
 
+function readMemoryState() {
+  return {
+    lastPlaceName: safeStorageGet(STORAGE_KEYS.lastPlaceName) || "",
+    lastCheckedAt: toSafeNumber(
+      safeStorageGet(STORAGE_KEYS.lastCheckedAt)
+    ),
+    accessCount: toSafeInteger(
+      safeStorageGet(STORAGE_KEYS.accessCount)
+    ),
+    streak: toSafeInteger(
+      safeStorageGet(STORAGE_KEYS.streak)
+    ),
+    lastDateKey: safeStorageGet(STORAGE_KEYS.lastDateKey) || "",
+    lastLine: safeStorageGet(STORAGE_KEYS.lastLine) || ""
+  };
+}
+
+function createVisitMemory({
+  placeName,
+  currentTime,
+  previousState
+}) {
+  const checkedAt = Date.now();
+  const dateKey = getDateKeyFromLocalTime(currentTime);
+  const accessCount = previousState.accessCount + 1;
+  const streak = calculateStreak({
+    previousDateKey: previousState.lastDateKey,
+    currentDateKey: dateKey,
+    previousStreak: previousState.streak
+  });
+
+  const memoryLine = buildMemoryLine({
+    placeName,
+    checkedAt,
+    accessCount,
+    streak,
+    previousState
+  });
+
+  return {
+    checkedAt,
+    dateKey,
+    accessCount,
+    streak,
+    memoryLine
+  };
+}
+
+function buildMemoryLine({
+  placeName,
+  checkedAt,
+  accessCount,
+  streak,
+  previousState
+}) {
+  if (!previousState.lastCheckedAt) {
+    return "これが最初の確認です。次からは、前回の貴女まで覚えておきます。";
+  }
+
+  const elapsedText = formatElapsedTime(
+    checkedAt - previousState.lastCheckedAt
+  );
+
+  let placeText = "";
+
+  if (!previousState.lastPlaceName) {
+    placeText = `今は${placeName}にいるんですね。`;
+  } else if (previousState.lastPlaceName === placeName) {
+    placeText = `前回と同じ${placeName}ですね。`;
+  } else {
+    placeText = `前回は${previousState.lastPlaceName}にいました。今は${placeName}ですね。移動したことも記録しました。`;
+  }
+
+  const streakText = streak >= 2
+    ? `${streak}日連続で私に居場所を知らせています。`
+    : "今日の記録も残しました。";
+
+  return `前回から${elapsedText}です。${placeText}これで${accessCount}回目の確認です。${streakText}`;
+}
+
+function calculateStreak({
+  previousDateKey,
+  currentDateKey,
+  previousStreak
+}) {
+  if (!previousDateKey || !currentDateKey) {
+    return 1;
+  }
+
+  if (previousDateKey === currentDateKey) {
+    return Math.max(previousStreak, 1);
+  }
+
+  const difference = getDateDifferenceInDays(
+    previousDateKey,
+    currentDateKey
+  );
+
+  if (difference === 1) {
+    return Math.max(previousStreak, 1) + 1;
+  }
+
+  return 1;
+}
+
+function getDateDifferenceInDays(fromDateKey, toDateKey) {
+  const from = parseDateKeyAsUtc(fromDateKey);
+  const to = parseDateKeyAsUtc(toDateKey);
+
+  if (!Number.isFinite(from) || !Number.isFinite(to)) {
+    return NaN;
+  }
+
+  return Math.round((to - from) / 86400000);
+}
+
+function parseDateKeyAsUtc(dateKey) {
+  const match = String(dateKey).match(
+    /^(\d{4})-(\d{2})-(\d{2})$/
+  );
+
+  if (!match) {
+    return NaN;
+  }
+
+  return Date.UTC(
+    Number(match[1]),
+    Number(match[2]) - 1,
+    Number(match[3])
+  );
+}
+
+function getDateKeyFromLocalTime(currentTime) {
+  if (typeof currentTime === "string") {
+    const match = currentTime.match(
+      /^(\d{4}-\d{2}-\d{2})T/
+    );
+
+    if (match) {
+      return match[1];
+    }
+  }
+
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
+function formatElapsedTime(milliseconds) {
+  if (!Number.isFinite(milliseconds) || milliseconds < 0) {
+    return "少しの時間";
+  }
+
+  const totalMinutes = Math.floor(milliseconds / 60000);
+
+  if (totalMinutes < 1) {
+    return "1分も経っていません";
+  }
+
+  if (totalMinutes < 60) {
+    return `${totalMinutes}分`;
+  }
+
+  const totalHours = Math.floor(totalMinutes / 60);
+  const remainingMinutes = totalMinutes % 60;
+
+  if (totalHours < 24) {
+    return remainingMinutes > 0
+      ? `${totalHours}時間${remainingMinutes}分`
+      : `${totalHours}時間`;
+  }
+
+  const totalDays = Math.floor(totalHours / 24);
+  const remainingHours = totalHours % 24;
+
+  return remainingHours > 0
+    ? `${totalDays}日${remainingHours}時間`
+    : `${totalDays}日`;
+}
+
+function saveMemoryState({
+  placeName,
+  checkedAt,
+  accessCount,
+  streak,
+  dateKey,
+  lastLine
+}) {
+  safeStorageSet(STORAGE_KEYS.lastPlaceName, placeName);
+  safeStorageSet(STORAGE_KEYS.lastCheckedAt, String(checkedAt));
+  safeStorageSet(STORAGE_KEYS.accessCount, String(accessCount));
+  safeStorageSet(STORAGE_KEYS.streak, String(streak));
+  safeStorageSet(STORAGE_KEYS.lastDateKey, dateKey);
+  safeStorageSet(STORAGE_KEYS.lastLine, lastLine);
+}
+
+function safeStorageGet(key) {
+  try {
+    return window.localStorage.getItem(key);
+  } catch (error) {
+    console.warn("localStorageを読み込めませんでした。", error);
+    return null;
+  }
+}
+
+function safeStorageSet(key, value) {
+  try {
+    window.localStorage.setItem(key, value);
+  } catch (error) {
+    console.warn("localStorageへ保存できませんでした。", error);
+  }
+}
+
+function toSafeNumber(value) {
+  const number = Number(value);
+  return Number.isFinite(number) && number > 0 ? number : 0;
+}
+
+function toSafeInteger(value) {
+  const number = Number.parseInt(value, 10);
+  return Number.isFinite(number) && number > 0 ? number : 0;
+}
+
 function weatherCodeToText(code) {
   const weatherMap = {
     0: "快晴",
@@ -604,6 +863,20 @@ function applyVariables(line, variables) {
     );
 }
 
+function chooseDifferentLine(items, variables, lastLine) {
+  const renderedLines = items.map((line) =>
+    applyVariables(line, variables)
+  );
+
+  const candidates = renderedLines.filter(
+    (line) => line !== lastLine
+  );
+
+  return randomItem(
+    candidates.length > 0 ? candidates : renderedLines
+  );
+}
+
 function randomItem(items) {
   return items[Math.floor(Math.random() * items.length)];
 }
@@ -620,7 +893,7 @@ function setLoading(message) {
 function setButtonDisabled(isDisabled) {
   button.disabled = isDisabled;
   button.textContent = isDisabled
-    ? "確認しています……"
+    ? "追跡しています……"
     : "Lから連絡を受ける";
 }
 
