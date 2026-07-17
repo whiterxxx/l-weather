@@ -649,7 +649,7 @@ function buildMemoryLine({
   previousState
 }) {
   if (!previousState.lastCheckedAt) {
-    return "これが最初の確認です。次からは、前回の貴女まで覚えておきます。";
+    return "これが最初の確認です。貴女のことは全て覚えておきます。";
   }
 
   const elapsedText = formatElapsedTime(
@@ -663,11 +663,11 @@ function buildMemoryLine({
   } else if (previousState.lastPlaceName === placeName) {
     placeText = `前回と同じ${placeName}ですね。`;
   } else {
-    placeText = `前回は${previousState.lastPlaceName}にいました。今は${placeName}ですね。移動したことも記録しました。`;
+    placeText = `前回は${previousState.lastPlaceName}にいました。今は${placeName}ですね。移動したことを記録しました。`;
   }
 
   const streakText = streak >= 2
-    ? `${streak}日連続で私に居場所を知らせています。`
+    ? `${streak}日連続で私に居場所を知らせてくれています。嬉しいです。`
     : "今日の記録も残しました。";
 
   return `前回から${elapsedText}です。${placeText}これで${accessCount}回目の確認です。${streakText}`;
