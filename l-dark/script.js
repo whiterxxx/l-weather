@@ -752,7 +752,7 @@ function formatElapsedTime(milliseconds) {
   const totalMinutes = Math.floor(milliseconds / 60000);
 
   if (totalMinutes < 1) {
-    return "1分も経っていません";
+    return "1分も経っていない";
   }
 
   if (totalMinutes < 60) {
