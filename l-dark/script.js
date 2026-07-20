@@ -14,7 +14,7 @@ const STORAGE_KEYS = {
 
 const normalLines = [
   `……\${placeName}ですか。把握しました。貴女の居場所は常に把握しています。`,
-  `その街の空より、私の視線のほうが近いです。貴女がどこにいても、私は必ず見つけます。`,
+  `その街の監視カメラより、私の視線のほうが確実です。貴女がどこにいても、私は必ず見つけます。`,
   `今そこにいるんですね。いいです。その場所は私の監視下です。`,
   `\${currentWeatherText}ですか。貴女が外にいると常に気になります。貴女を濡らす雨も、冷やす風も、気に入りません。`,
   `勝手に遠くへ行くのは感心しません。貴女の現在地は常に私が把握しています。`,
@@ -118,7 +118,7 @@ const timeLines = {
     `朝から貴女の現在地が分かると、私の思考がようやく整います。`,
     `目が覚めて最初に貴女を確認する。もう完全に習慣になっています。`,
     `今日はどこへ行くつもりですか。私はもう、その行き先を知っていますが。`,
-    `朝食は食べましたか。現在地だけではなく、そこまで把握しておきたいです。`
+    `朝食は食べましたか。天気だけではなく、そこまで報告してほしいです。`
   ],
 
   daytime: [
@@ -649,12 +649,14 @@ function buildMemoryLine({
   previousState
 }) {
   if (!previousState.lastCheckedAt) {
-    return "これが最初の確認です。貴女のことは全て覚えておきます。";
+    return "これが最初の確認です。次からは、前回の貴女まで覚えておきます。";
   }
 
-  const elapsedText = formatElapsedTime(
-    checkedAt - previousState.lastCheckedAt
-  );
+  const elapsedMilliseconds = checkedAt - previousState.lastCheckedAt;
+  const elapsedText = formatElapsedTime(elapsedMilliseconds);
+  const elapsedSentence = elapsedMilliseconds >= 24 * 60 * 60 * 1000
+    ? `${elapsedText}、貴女の現在地を確認できませんでした。`
+    : `前回から${elapsedText}です。`;
 
   let placeText = "";
 
@@ -663,14 +665,14 @@ function buildMemoryLine({
   } else if (previousState.lastPlaceName === placeName) {
     placeText = `前回と同じ${placeName}ですね。`;
   } else {
-    placeText = `前回は${previousState.lastPlaceName}にいました。今は${placeName}ですね。移動したことを記録しました。`;
+    placeText = `前回は${previousState.lastPlaceName}にいました。今は${placeName}ですね。移動したことも記録しました。`;
   }
 
   const streakText = streak >= 2
-    ? `${streak}日連続で私に居場所を知らせてくれています。嬉しいです。`
-    : "この記録もしっかり残しました。";
+    ? `${streak}日連続で私に居場所を知らせています。`
+    : "今日の記録も残しました。";
 
-  return `前回から${elapsedText}です。${placeText}これで${accessCount}回目の確認です。${streakText}`;
+  return `${elapsedSentence}${placeText}これで${accessCount}回目の確認です。${streakText}`;
 }
 
 function calculateStreak({
@@ -752,7 +754,7 @@ function formatElapsedTime(milliseconds) {
   const totalMinutes = Math.floor(milliseconds / 60000);
 
   if (totalMinutes < 1) {
-    return "1分も経っていない";
+    return "1分も経っていません";
   }
 
   if (totalMinutes < 60) {
@@ -772,7 +774,7 @@ function formatElapsedTime(milliseconds) {
   const remainingHours = totalHours % 24;
 
   return remainingHours > 0
-    ? `${totalDays}日${remainingHours}時間`
+    ? `${totalDays}日と${remainingHours}時間`
     : `${totalDays}日`;
 }
 
@@ -893,7 +895,7 @@ function setLoading(message) {
 function setButtonDisabled(isDisabled) {
   button.disabled = isDisabled;
   button.textContent = isDisabled
-    ? "追跡しています……"
+    ? "確認しています……"
     : "Lから連絡を受ける";
 }
 
