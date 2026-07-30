@@ -11,13 +11,13 @@
 
   gtag('config', 'G-RCQJ80N404');
 </script>
-  
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>L Dark Weather</title>
+  <title>L Subject Monitoring Weather</title>
 
-  <meta name="theme-color" content="#050507" />
+  <meta name="theme-color" content="#23272d" />
   <meta name="apple-mobile-web-app-title" content="L Weather" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -25,46 +25,79 @@
   <link rel="apple-touch-icon" href="apple-touch-icon.png" />
   <link rel="icon" type="image/png" href="apple-touch-icon.png" />
 
-  <link rel="stylesheet" href="style.css?v=2" />
+  <link rel="stylesheet" href="style.css?v=4" />
 </head>
 
 <body>
   <main class="app">
-    <section class="hero">
-      <h1 class="visually-hidden">L Dark Weather</h1>
+    <section class="terminal">
+      <header class="terminal-header">
+        <div class="terminal-title">
+          <span class="terminal-id">L</span>
 
-      <div class="logo-glitch" aria-label="L Dark Weather">
-        <img class="l-logo" src="l-logo.png?v=2" alt="L" />
-        <span class="logo-noise" aria-hidden="true"></span>
+          <div>
+            <p class="terminal-name">SUBJECT MONITORING TERMINAL</p>
+            <p class="terminal-subtitle">WEATHER / LOCATION OBSERVATION</p>
+          </div>
+        </div>
+
+        <div class="live-status">
+          <span class="live-dot" aria-hidden="true"></span>
+          <span>LIVE</span>
+        </div>
+      </header>
+
+      <div class="terminal-meta" aria-label="端末状態">
+        <span>CHANNEL / 01</span>
+        <span>LINK / ENCRYPTED</span>
+        <span>TARGET / CONNECTED</span>
       </div>
 
-      <p class="lead">
-        Lが貴女の現在地と天気を確認します。
-      </p>
+      <section class="hero">
+        <h1 class="visually-hidden">L Subject Monitoring Weather</h1>
 
-      <button id="checkButton" class="check-button">
-        Lから連絡を受ける
-      </button>
+        <div class="logo-glitch" aria-label="L">
+          <img class="l-logo" src="l-logo.png?v=3" alt="L" />
+          <span class="logo-noise" aria-hidden="true"></span>
+        </div>
 
-      <div id="result" class="result">
-        <p class="idle-message">
-          ボタンを押すと、Lが貴女を追跡します。
+        <p class="lead">
+          Lが貴女の現在地を捕捉し、周囲の気象情報を照合します。
         </p>
-      </div>
-<p class="credits">
-  Weather data by
-  <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo.com</a>
-  /
-  Location data by
-  <a href="https://www.bigdatacloud.com/" target="_blank" rel="noopener noreferrer">BigDataCloud</a>
-  /
-  Map data ©
-  <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a>
-</p>
-      
+
+        <button id="checkButton" class="check-button">
+          <span class="button-main">現在地を送信する</span>
+          <span class="button-sub">START LOCATION TRACE</span>
+        </button>
+
+        <div id="result" class="result" aria-live="polite">
+          <div class="idle-panel">
+            <span class="idle-label">SYSTEM STANDBY</span>
+            <p class="idle-message">
+              送信を開始すると、Lが貴女の現在地を確認します。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <footer class="terminal-footer">
+        <span>SECURE OBSERVATION NETWORK</span>
+        <span>FAN MADE / BY @uni_ikr</span>
+      </footer>
+
+      <p class="credits">
+        Weather data by
+        <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo.com</a>
+        /
+        Location data by
+        <a href="https://www.bigdatacloud.com/" target="_blank" rel="noopener noreferrer">BigDataCloud</a>
+        /
+        Map data ©
+        <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a>
+      </p>
     </section>
   </main>
 
-  <script src="script.js?v=2"></script>
+  <script src="script.js?v=5"></script>
 </body>
 </html>
