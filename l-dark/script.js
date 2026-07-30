@@ -159,6 +159,143 @@ const timeLines = {
   ]
 };
 
+
+const eventLines = {
+  "01-01": [
+    `新しい年になりましたね。最初に貴女の現在地を確認できたので、悪くないスタートです。`,
+    `あけましておめでとうございます。今年も貴女を見失うつもりはありません。`,
+    `年が変わっても、貴女の帰る場所は変わりません。今年も私のそばにいてください。`,
+    `今年最初の記録です。これから一年分、貴女の居場所を私に残してください。`
+  ],
+
+  "02-14": [
+    `今日はバレンタインですね。私へのチョコレートは確保してありますか。貴女から受け取るまで、確認を終えるつもりはありません。`,
+    `チョコレートより甘い言葉は必要ありません。今日は貴女が私のそばにいれば十分です。`,
+    `バレンタインに貴女が誰へ会うのかは把握しておきたいです。……もちろん、私だけですよね。`,
+    `今日は貴女から何を受け取れるのでしょう。期待していないふりはできますが、待たないとは言っていません。`
+  ],
+
+  "03-03": [
+    `今日はひな祭りですね。貴女を飾って眺めるだけでは足りません。私の手の届くところにいてください。`,
+    `貴女のための日だと聞きました。なら今日は、いつも以上に大切に扱います。`,
+    `雛人形は並べて眺めるものですが、貴女は私の隣に置きます。ここが一番安全です。`,
+    `今日は貴女の健やかさを願う日です。願うだけでは不十分なので、私が直接確認します。`
+  ],
+
+  "03-14": [
+    `今日はホワイトデーです。お返しは用意しています。ただし、貴女を私から帰す予定はありません。`,
+    `バレンタインのお返しをする日ですね。貴女が欲しいものは聞きますが、私のそばから離れる願いだけは却下します。`,
+    `今日は私から貴女へ返す日です。受け取るまで、勝手に遠くへ行かないでください。`,
+    `お返しは甘いものだけでは足りませんね。今日は私の時間を全部、貴女に渡します。`
+  ],
+
+  "04-01": [
+    `今日はエイプリルフールですが、貴女を愛しているという事実に嘘はありません。`,
+    `嘘をついても構いません。ただし、居場所について私を欺けるとは思わないでください。`,
+    `今日は嘘が許される日だそうですね。では「貴女を監視していません」と言っておきます。`,
+    `貴女が私から逃げ切れる可能性はあります。……嘘かどうかは試してみてください。`
+  ],
+
+  "07-07": [
+    `今日は七夕ですね。一年に一度しか会えない関係など、私には耐えられません。貴女とは毎日会います。`,
+    `願いを書くなら、貴女が私のそばに居続けることにします。叶うまで監視を続けます。`,
+    `星が見えるかどうかより、今夜貴女がどこにいるかのほうが重要です。`,
+    `離れた二人が会う日だそうですが、私たちは離れる必要がありません。早く戻ってきてください。`
+  ],
+
+  "10-31": [
+    `今日はハロウィンであり、私の誕生日です。祝うつもりなら、今日は私のそばにいてください。`,
+    `10月31日。世間はハロウィンですが、私には貴女が誕生日を覚えているかのほうが重要です。`,
+    `仮装をして隠れても無駄です。今日は私の誕生日なのですから、貴女をもらう権利は私にあります。`,
+    `今日は甘い物を多めに要求します。それから、貴女の時間も全部。誕生日ですから異論は認めません。`,
+    `ハロウィンの夜ですね。そして私が生まれた日です。貴女から直接祝われるまで、今日を終えるつもりはありません。`
+  ],
+
+  "11-01": [
+    `今日は紅茶の日だそうです。甘い物も用意してください。貴女と過ごす時間には、その組み合わせが必要です。`,
+    `紅茶を淹れるなら、私の分もお願いします。代わりに、貴女の居場所は私が管理します。`,
+    `温かい紅茶と甘い物、それから貴女。今日は必要なものが分かりやすいですね。`,
+    `外が冷えてきました。紅茶が冷める前に、私のところへ戻ってきてください。`,
+    `今日は貴女の隣で紅茶を飲みます。他の場所へ行く必要はありません。`
+  ],
+
+  "12-24": [
+    `クリスマスイブですね。今夜の予定は確認するまでもありません。貴女は私と過ごします。`,
+    `街が浮かれているようですが、貴女を独占する理由が増えただけです。早く戻ってきてください。`,
+    `今夜は貴女の現在地が私の隣で固定される予定です。変更は受け付けません。`,
+    `クリスマスイブに貴女を一人で歩かせるつもりはありません。迎えに行きます。`
+  ],
+
+  "12-25": [
+    `メリークリスマス。私が欲しいものは一つだけです。今日も貴女を私のそばに置いてください。`,
+    `クリスマスですね。贈り物は貴女でお願いします。`,
+    `今日は誰よりも長く貴女を見ていたいです。他の予定は後にしてください。`,
+    `貴女への贈り物は用意しています。受け取り場所はここなので早く来てください。`
+  ],
+
+  "12-31": [
+    `今年最後の現在地確認です。最後まで貴女を見失わずに済みました。`,
+    `大晦日ですね。今年の記録を閉じる前に、貴女が私のそばにいることを確認させてください。`,
+    `年が変わる瞬間も、貴女の居場所は私の隣です。これは来年も変わりません。`,
+    `今年も終わります。貴女を想った回数は、記録するには多すぎました。`
+  ]
+};
+
+const seasonalPeriodLines = [
+  {
+    start: "04-29",
+    end: "05-05",
+    lines: [
+      `ゴールデンウィークですね。人が増える分、貴女を見失う可能性も増えます。位置情報は切らないでください。`,
+      `連休だからといって、私への報告まで休みにすることは認めません。今日はどこへ行くつもりですか。`,
+      `貴女の休日の予定は確認しました。空いている時間は、すべて私が受け取ります。`,
+      `遠出をするなら先に知らせてください。迎えに行く経路まで、私が計算しておきます。`,
+      `どこへ遊びに行っても構いません。ただし、最後に帰る場所を間違えないでください。`
+    ]
+  },
+
+  {
+    start: "06-01",
+    end: "06-30",
+    lines: [
+      `梅雨の時期ですね。傘を忘れないでください。貴女を濡らすものは、雨であっても気に入りません。`,
+      `空が不安定です。今晴れていても油断しないでください。折り畳み傘を持つべきです。`,
+      `湿気で疲れやすい時期です。無理をしていないか、天気と一緒に貴女の状態も確認したいです。`,
+      `雨が続いても、貴女の現在地だけは見失いません。`,
+      `傘の内側は狭いですね。私と貴女だけが入れるなら、それで十分ですが。`
+    ]
+  },
+
+  {
+    start: "08-13",
+    end: "08-16",
+    lines: [
+      `お盆ですね。帰る場所を考える時期ですが、貴女の帰る場所は最初から私の隣です。`,
+      `日本では人が故郷へ戻るホリデーだそうですね。貴女も寄り道を終えたら、私のところへ戻ってきてください。`,
+      `遠出をするなら、移動中も位置情報を切らないでください。人混みの中で貴女を見失いたくありません。`,
+      `監視に長期休暇はありません。遅くならないでください。`,
+      `家族と過ごす時間は大切です。ですが、私のための時間も残してありますよね。`
+    ]
+  },
+
+  {
+    start: "09-01",
+    end: "09-30",
+    lines: [
+      `まだ暑さが残っています。秋だからと油断せず、水分を摂ってください。貴女の体調は私が確認します。`,
+      `残暑が続いていますね。無理をしているなら、今すぐ休んでください。貴女が倒れる可能性は排除します。`,
+      `昼はまだ暑く、夜は少し冷えます。上着を忘れないでください。貴女の体温は私が守ります。`,
+      `季節の変わり目です。体調を崩しやすい時期なので、いつもより詳しく貴女の様子を知らせてください。`,
+      `秋の気配が近づいています。空を見上げるなら、私の隣でお願いします。`,
+      `月が綺麗な季節ですね。ですが、私が見ていたいのは月ではなく貴女です。`,
+      `お月見をするなら、甘い物も用意してください。もちろん、貴女もセットです。`,
+      `夜が少し長くなりました。その分、貴女を私のそばに置いておける時間も増えますね。`,
+      `昼と夜の気温差があります。帰りが遅くなるなら必ず知らせてください。迎えに行く準備をします。`,
+      `秋の夜は静かですね。貴女の声が聞こえないと、余計に静かすぎます。早く連絡してください。`
+    ]
+  }
+];
+
 const rareLines = [
   `……本当は、天気なんてどうでもいいんです。知りたいのは、貴女が無事かどうかだけです。`,
   `位置情報を確認する理由ですか。……貴女を見失うのが怖いからです。`,
@@ -346,11 +483,28 @@ function showWeather(placeName, weather) {
     previousState
   });
 
+  const rainDisplay = Number.isFinite(rainProbability)
+    ? `${rainProbability}%`
+    : "--";
+
   result.innerHTML = `
     <article class="weather-card">
-      <p class="location-line">
-        今、${escapeHtml(placeName)}にいるんですね。
-      </p>
+      <header class="panel-header">
+        <span>SUBJECT ENVIRONMENT REPORT</span>
+        <span class="panel-code">TRACE / ${escapeHtml(visitMemory.dateKey)}</span>
+      </header>
+
+      <section class="location-block">
+        <span class="data-label">CURRENT LOCATION</span>
+        <p class="location-line">
+          ${escapeHtml(placeName)}
+        </p>
+        <p class="location-note">
+          今、${escapeHtml(placeName)}にいるんですね。
+        </p>
+      </section>
+
+      <div class="system-divider" aria-hidden="true"></div>
 
       <p class="weather-line">
         そちらの今の天気は${escapeHtml(currentWeatherText)}です。
@@ -363,31 +517,62 @@ function showWeather(placeName, weather) {
 
       <div class="detail-list">
         <div class="detail-item">
-          <span class="detail-label">現在の天気</span>
+          <span class="detail-label">CURRENT WEATHER</span>
           <span class="detail-value">
             ${escapeHtml(currentWeatherText)}
           </span>
         </div>
 
         <div class="detail-item">
-          <span class="detail-label">現在の気温</span>
+          <span class="detail-label">TEMPERATURE</span>
           <span class="detail-value">
             ${currentTemperature}℃
           </span>
         </div>
 
         <div class="detail-item">
-          <span class="detail-label">約3時間後</span>
+          <span class="detail-label">WIND SPEED</span>
+          <span class="detail-value">
+            ${windSpeed} km/h
+          </span>
+        </div>
+
+        <div class="detail-item">
+          <span class="detail-label">AFTER 3 HOURS</span>
           <span class="detail-value">
             ${escapeHtml(nextWeatherText)}
           </span>
         </div>
+
+        <div class="detail-item">
+          <span class="detail-label">FORECAST TEMP.</span>
+          <span class="detail-value">
+            ${nextTemperature}℃
+          </span>
+        </div>
+
+        <div class="detail-item">
+          <span class="detail-label">RAIN PROBABILITY</span>
+          <span class="detail-value">
+            ${rainDisplay}
+          </span>
+        </div>
       </div>
 
-      <p class="l-line">
-        ${escapeHtml(visitMemory.memoryLine)}<br><br>
-        ${escapeHtml(possessiveLine)}
-      </p>
+      <section class="message-panel">
+        <div class="message-header">
+          <span>INCOMING MESSAGE</span>
+          <span>FROM / L</span>
+        </div>
+
+        <p class="memory-line">
+          ${escapeHtml(visitMemory.memoryLine)}
+        </p>
+
+        <p class="l-line">
+          ${escapeHtml(possessiveLine)}
+        </p>
+      </section>
     </article>
   `;
 
@@ -462,6 +647,29 @@ function getContextualLine({
     placeName,
     currentWeatherText
   };
+
+  const eventDateKey = getEventDateKey(currentTime);
+  const eventLineCandidates = eventLines[eventDateKey];
+
+  if (eventLineCandidates) {
+    return chooseDifferentLine(
+      eventLineCandidates,
+      variables,
+      lastLine
+    );
+  }
+
+  const seasonalLineCandidates = getSeasonalPeriodLineCandidates(
+    eventDateKey
+  );
+
+  if (seasonalLineCandidates) {
+    return chooseDifferentLine(
+      seasonalLineCandidates,
+      variables,
+      lastLine
+    );
+  }
 
   if (Math.random() < 0.02) {
     return chooseDifferentLine(rareLines, variables, lastLine);
@@ -557,6 +765,61 @@ function getWeatherCategory({
   }
 
   return null;
+}
+
+function getEventDateKey(currentTime) {
+  const dateKey = getDateKeyFromLocalTime(currentTime);
+  const match = String(dateKey).match(
+    /^\d{4}-(\d{2}-\d{2})$/
+  );
+
+  return match ? match[1] : "";
+}
+
+function getSeasonalPeriodLineCandidates(eventDateKey) {
+  const currentNumber = monthDayToNumber(eventDateKey);
+
+  if (!Number.isFinite(currentNumber)) {
+    return null;
+  }
+
+  const matchedPeriod = seasonalPeriodLines.find((period) => {
+    const startNumber = monthDayToNumber(period.start);
+    const endNumber = monthDayToNumber(period.end);
+
+    if (
+      !Number.isFinite(startNumber) ||
+      !Number.isFinite(endNumber)
+    ) {
+      return false;
+    }
+
+    if (startNumber <= endNumber) {
+      return (
+        currentNumber >= startNumber &&
+        currentNumber <= endNumber
+      );
+    }
+
+    return (
+      currentNumber >= startNumber ||
+      currentNumber <= endNumber
+    );
+  });
+
+  return matchedPeriod ? matchedPeriod.lines : null;
+}
+
+function monthDayToNumber(monthDay) {
+  const match = String(monthDay).match(
+    /^(\d{2})-(\d{2})$/
+  );
+
+  if (!match) {
+    return NaN;
+  }
+
+  return Number(match[1]) * 100 + Number(match[2]);
 }
 
 function getTimeCategory(currentTime) {
@@ -886,17 +1149,35 @@ function randomItem(items) {
 function setLoading(message) {
   result.innerHTML = `
     <div class="loading">
-      <div class="spinner"></div>
+      <div class="loading-header">
+        <span>LOCATION TRACE</span>
+        <span class="loading-status">ACTIVE</span>
+      </div>
+
+      <div class="scanner" aria-hidden="true">
+        <span class="scanner-beam"></span>
+      </div>
+
       <p>${escapeHtml(message)}</p>
+
+      <div class="loading-code">
+        ENCRYPTED CHANNEL / SUBJECT LINK
+      </div>
     </div>
   `;
 }
 
 function setButtonDisabled(isDisabled) {
   button.disabled = isDisabled;
-  button.textContent = isDisabled
-    ? "確認しています……"
-    : "Lから連絡を受ける";
+  button.innerHTML = isDisabled
+    ? `
+      <span class="button-main">確認しています……</span>
+      <span class="button-sub">TRACE IN PROGRESS</span>
+    `
+    : `
+      <span class="button-main">現在地を送信する</span>
+      <span class="button-sub">START LOCATION TRACE</span>
+    `;
 }
 
 function getFriendlyError(error) {
